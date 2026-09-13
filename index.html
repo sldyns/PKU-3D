@@ -1,0 +1,147 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f4f3ec"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%225%22%20fill%3D%22%238b302c%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2228%22%20text-anchor%3D%22middle%22%20font-family%3D%22serif%22%20font-size%3D%2226%22%20fill%3D%22%23fffaf0%22%3E%E7%87%95%3C%2Ftext%3E%3C%2Fsvg%3E"><meta name="description" content="由 GPT-6 Astra 构建的燕园三维漫游。走近未名湖、校园建筑与四季光影。"><meta name="application-name" content="燕园 1.0.0"><title>燕园 · 循图，走进燕园</title><link rel="stylesheet" href="assets/style-50e76e8829553f73.css"></head><body>
+<div id="app"><canvas id="scene" aria-label="燕园三维校园，拖动旋转，右键拖动平移，滚轮缩放，点击建筑查看" tabindex="0"></canvas><svg id="plan" aria-label="燕园平面地图，可拖动缩放和点选建筑" hidden></svg><div id="labels" aria-label="三维地点标注"></div>
+<header class="topbar"><button id="catalog-toggle" aria-label="展开或收起地点目录" class="brand" aria-controls="catalog" aria-expanded="true"><span class="brand-seal" aria-hidden="true">游</span><span>燕园<small>PKU-3D</small></span></button><nav id="modes" aria-label="地图视图"><button data-mode="3d" aria-pressed="true">三维校园</button><button data-mode="plan" aria-pressed="false">平面布局</button><a href="https://www.arcgis.com/apps/mapviewer/index.html?basemapUrl=https%3A%2F%2Fservices.arcgisonline.com%2FArcGIS%2Frest%2Fservices%2FWorld_Imagery%2FMapServer&amp;center=116.304%2C39.992&amp;level=17" target="_blank" rel="noopener" title="在地图官网打开">卫星地图 ↗</a><a href="https://www.openstreetmap.org/#map=17/39.992/116.304" target="_blank" rel="noopener" title="在地图官网打开">标准地图 ↗</a></nav><button id="environment-open" class="quiet" aria-controls="environment" aria-expanded="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="3.8"/><path d="M12 1.8v2.6m0 15.2v2.6M1.8 12h2.6m15.2 0h2.6M4.8 4.8l1.9 1.9m10.6 10.6 1.9 1.9M4.8 19.2l1.9-1.9M17.3 6.7l1.9-1.9"/></svg><span>光影与生活</span></button></header>
+<aside id="catalog" class="panel"><button id="catalog-collapse" type="button" aria-label="收起地点目录" title="收起地点目录"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h12"/></svg></button><div class="eyebrow">PEKING UNIVERSITY · CAMPUS STUDY</div><h1>循图，走进燕园。</h1><p class="intro">楼宇、院落与校园日常。</p><label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="搜索楼名、院系、食堂…" aria-label="搜索地点"><kbd>/</kbd></label><nav id="filters" aria-label="地点类别"><button data-filter="精选" aria-pressed="true">精选</button><button data-filter="教学">教学</button><button data-filter="园林">园林</button><button data-filter="体育">体育</button><button data-filter="生活">生活</button><button data-filter="食堂">食堂</button><button data-filter="全部">全部</button></nav><p id="result-count" class="small"></p><div id="place-list"></div><footer class="catalog-foot"><span id="coverage"></span><button id="sources-open">数据来源 ↗</button></footer></aside>
+<aside id="detail" class="panel" aria-label="地点详情" hidden><button id="detail-close" class="close" aria-label="关闭地点详情">×</button><div class="eyebrow" id="detail-category"></div><h2 id="detail-title"></h2><p id="detail-summary"></p><div class="action-grid"><button id="focus" class="primary">靠近查看</button><button id="isolate">独立查看</button><button id="front-view">正面观察</button><button id="side-view">侧面观察</button><button id="back-view">背面观察</button><button id="roof-view">屋顶观察</button><button id="ne-view" hidden>东北角度</button><button id="show-plan">平面核对</button><button id="route-open">沿路探索</button></div><div id="reference-gallery"></div><dl id="detail-facts"></dl><p class="small" id="detail-note"></p><div id="detail-links"></div><p class="small" id="detail-reference"></p></aside>
+<section id="environment" class="panel floating" hidden><button class="close" data-close="environment" aria-label="关闭光影设置">×</button><div class="eyebrow">LIGHT & LIFE</div><h2>光影与生活</h2><p class="environment-intro">循着日光，看四季里的燕园。</p><label class="daylight-control">日照时间 <output id="hour-value">10:30</output><input id="hour" type="range" min="6" max="21" value="10.5" step=".25"></label><div class="environment-selects"><label>季节<select id="season"><option value="0">春</option><option value="1" selected>夏</option><option value="2">秋</option><option value="3">冬</option></select></label><label>天气<select id="weather"><option value="0">晴朗</option><option value="1">细雨</option><option value="2">薄雾</option><option value="3">落雪</option></select></label></div><div class="environment-toggles"><label class="inline"><input id="show-labels" type="checkbox" checked>显示地点名称</label><label class="inline"><input id="vegetation" type="checkbox" checked>显示植被</label><label class="inline"><input id="show-people" type="checkbox" checked disabled>校园行人</label><label class="inline"><input id="animation" type="checkbox" checked>环境动画</label></div><button id="walkers-view" class="walkers-view" disabled>湖畔近景 <span aria-hidden="true">↗</span></button><p class="small environment-note">季节、天气与校园行人为场景模拟。</p></section>
+<section id="route-panel" class="panel floating" hidden><button class="close" data-close="route-panel" aria-label="关闭沿路探索">×</button><h2>沿路探索</h2><label>从校门出发<select id="route-from" aria-label="路线起点"></select></label><label>前往<select id="route-to" aria-label="路线终点"></select></label><button id="route-plan" class="primary">显示地图路线</button><p id="route-status" role="status" class="small">按公开道路网络连接附近路段。</p><input id="route-progress" aria-label="沿路浏览进度" type="range" min="0" max="1000" value="0" disabled><div class="action-grid"><button id="route-play" disabled>沿路浏览</button><button id="route-clear">清除路线</button></div><p class="small">终点是附近道路节点，不代表楼门。未核验开放与通行条件，不作实际导航。</p></section>
+<button id="catalog-restore" class="glass" type="button" aria-controls="catalog" aria-expanded="false" hidden><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h12"/></svg>地点目录</button>
+<div id="map-options" class="glass" hidden><label><input type="checkbox" id="overlay">本项目轮廓</label><label><input type="checkbox" id="raw-overlay">原始 OSM 轮廓</label></div>
+<div id="isolation-banner" class="glass" hidden>单体观察 <button id="isolation-exit">返回校园 ↗</button></div>
+<div id="map-controls" class="glass"><button id="north" aria-label="恢复正北朝上">↑<small>北 N</small></button><button id="top" aria-label="垂直俯视">俯视</button><button id="zoom-in" aria-label="放大">＋</button><button id="zoom-out" aria-label="缩小">−</button><button id="home" aria-label="返回全校">⌂</button></div>
+<footer id="map-footer"><span id="map-credit"></span><span id="view-hint">拖动旋转 · 右键平移 · 滚轮缩放</span></footer><div id="status" role="status">正在走进燕园…</div>
+<dialog id="sources"><button class="close" data-close="sources" aria-label="关闭数据来源">×</button><div class="eyebrow">DATA SOURCES</div><h2>地图与数据</h2><p class="project-credit">PKU-3D 1.0.0 · 由 GPT-6 Astra 构建。全部基础数据与建模参考均来自公开来源。</p><div class="source-cards"><section><h3>校园数据</h3><p>建筑占地、道路与水系源于 OpenStreetMap，并结合公开资料校对。部分尺寸和建筑细节为近似。</p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap · ODbL ↗</a></section><section><h3>地图对照</h3><p>卫星影像与标准地图在提供方官网查看。</p><a href="https://www.arcgis.com/apps/mapviewer/index.html?basemapUrl=https%3A%2F%2Fservices.arcgisonline.com%2FArcGIS%2Frest%2Fservices%2FWorld_Imagery%2FMapServer&amp;center=116.304%2C39.992&amp;level=17" target="_blank" rel="noopener">Esri 卫星地图 ↗</a><br><a href="https://www.openstreetmap.org/#map=17/39.992/116.304" target="_blank" rel="noopener">OpenStreetMap ↗</a></section><section><h3>来源与许可</h3><p>软件采用 MIT；OSM 衍生数据采用 ODbL。</p><a href="https://github.com/sldyns/PKU-3D/blob/main/docs/SOURCES.zh-CN.md" target="_blank" rel="noopener">查看来源与许可 ↗</a></section></div><a href="https://github.com/sldyns/PKU-3D/issues/new/choose" target="_blank" rel="noopener">反馈与贡献 ↗</a></dialog>
+<dialog id="photo-viewer"><button class="close" data-close="photo-viewer" aria-label="关闭参考照片">×</button><h2 id="photo-title"></h2><img id="photo-large" alt=""><p id="photo-caption"></p><a id="photo-source" target="_blank" rel="noopener">查看照片来源 ↗</a></dialog></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script defer src="assets/app-14702ad4b197885d.js"></script></body></html>
