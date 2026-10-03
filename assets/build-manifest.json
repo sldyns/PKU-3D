@@ -1,10 +1,10 @@
 {
-  "version": "1.2.0",
-  "htmlBytes": 12139,
-  "scriptBytes": 10577947,
-  "sceneCompressedBytes": 71656324,
-  "sceneSourceHash": "0e65f9e8329e0107bc1f87dba9bbcae9e22295326662f875bfae964e49f9c52d",
+  "version": "1.4.0",
+  "htmlBytes": 12526,
+  "scriptBytes": 15143080,
+  "sceneCompressedBytes": 108822760,
+  "sceneSourceHash": "42a65f50ed92b87f6e9c7883105244a69f33c53ffa40685132e9f88e5d824c55",
   "images": 0,
-  "copiedAssets": 139,
-  "bundle": "app-786bc823f81096b2.js"
+  "copiedAssets": 193,
+  "bundle": "app-fb6c407787b37eef.js"
 }
