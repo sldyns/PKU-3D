@@ -1,10 +1,32 @@
 {
-  "version": "1.5.0",
-  "htmlBytes": 15634,
-  "scriptBytes": 15387460,
+  "version": "1.5.1",
+  "htmlBytes": 15878,
+  "scriptBytes": 15393561,
+  "runtimeData": [
+    {
+      "file": "data-25ea5ae72b953f7f.js",
+      "bytes": 1772853,
+      "sha256": "25ea5ae72b953f7f250b6cab0e19c0c6bb282fb5ecb10cd1d89277c6b801cfa1"
+    },
+    {
+      "file": "data-a30361a0d38a91be.js",
+      "bytes": 677789,
+      "sha256": "a30361a0d38a91be8f0817a5a81538f36689a0eb167398dd8457f051967bbf62"
+    },
+    {
+      "file": "data-64000b288ad43f6b.js",
+      "bytes": 66,
+      "sha256": "64000b288ad43f6b846b9213887859874da2d926db189716dbf8286fc9c2ad1b"
+    },
+    {
+      "file": "data-20e1b36a520e5d89.js",
+      "bytes": 7499488,
+      "sha256": "20e1b36a520e5d89ff0eef64f736ac66c583ea7dca8efa84a630c6ac1931ff10"
+    }
+  ],
   "sceneCompressedBytes": 112351892,
-  "sceneSourceHash": "bfed711009d7b723b90ebf7bae3c4901a8bb38b8230b2e16c4ab6167aa3cc03a",
+  "sceneSourceHash": "d848d1c4aca1d7db1ae1bcb33bdc5109279080404c0675a6e7077c8c0672398b",
   "images": 0,
   "copiedAssets": 244,
-  "bundle": "app-fe037e8c172e917c.js"
+  "bundle": "app-8750e518a735d3ac.js"
 }
