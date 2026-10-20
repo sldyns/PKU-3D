@@ -1,5 +1,5 @@
 {
-  "version": "1.5.1",
+  "version": "1.5.2",
   "htmlBytes": 15878,
   "scriptBytes": 15393561,
   "runtimeData": [
@@ -28,5 +28,5 @@
   "sceneSourceHash": "d848d1c4aca1d7db1ae1bcb33bdc5109279080404c0675a6e7077c8c0672398b",
   "images": 0,
   "copiedAssets": 244,
-  "bundle": "app-8750e518a735d3ac.js"
+  "bundle": "app-30edc938740f9b6f.js"
 }

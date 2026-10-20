@@ -39987,7 +39987,7 @@ async function init(recover=false){finishPanelOffset();
   const scene=await loadRenderResources(next,(n,total)=>{if(generation===renderGeneration)$('status').textContent=(recover?'正在恢复校园… ':'正在打开校园… ')+Math.round(n/total*100)+'%';},prepared);
   if(generation!==renderGeneration){next.dispose();return;}
   campus=scene;next.people=Y.Pedestrians46.create(next,campus,state);$('show-people').disabled=false;$('walkers-view').disabled=false;$('quality-preset').disabled=false;ready=true;lastVisualKey='';lastInput=null;last=lastDraw=0;root.dataset.ready='true';$('coverage').textContent=`${D.features.filter(f=>f.properties.kind==='building'&&!f.properties.supersededBy43).length} 个建筑对象`;$('status').textContent='';
-  window.Yanyuan={version:'1.5.1',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
+  window.Yanyuan={version:'1.5.2',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
   if(!recover&&developmentReferences){const script=document.createElement('script');script.src='private/reference-gallery.js';script.onload=()=>{if(selected)renderReferenceGallery(by.get(selected).properties);};document.head.appendChild(script);}
    cancelAnimationFrame(frameRequest);frameRequest=requestAnimationFrame(tick);
  }catch(e){next?.dispose();if(generation!==renderGeneration)return;$('quality-preset').disabled=true;console.error(e);$('status').textContent='三维暂不可用，已切换平面地图。';changeMode('plan');ready=true;root.dataset.ready='plan-only';}finally{prepared?.dispose();}
