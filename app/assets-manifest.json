@@ -1212,6 +1212,356 @@
       "sha256": "01a45f62171de3743bd1645738013bf940139048fa26e6662e8ddfcc4ff99566"
     },
     {
+      "path": "app/assets/runtime-v46/scene/startup-delta-0621c43439299be25d4451f6.bin.gz",
+      "bytes": 408554,
+      "sha256": "0621c43439299be25d4451f6a1f23ad48fe457ccdfb6b9ac5f0dc51b70ba77b4"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-062a1263ca58858e3e541c0a.bin.gz",
+      "bytes": 805418,
+      "sha256": "062a1263ca58858e3e541c0a4ec175f59d6ec0716d46e249fc589acc5cbeef3b"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-06bf55b79ec9e0a4ff7474be.bin.gz",
+      "bytes": 50964,
+      "sha256": "06bf55b79ec9e0a4ff7474be02333c91f9c52cac6943107039296730806e1d40"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-0f0ad4a009dcb22a511c1a9c.bin.gz",
+      "bytes": 1276257,
+      "sha256": "0f0ad4a009dcb22a511c1a9c464925fe2a72c399d2001f0c65eb51b684029a1a"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-11269d4368bc2b5e4e9ec006.bin.gz",
+      "bytes": 775287,
+      "sha256": "11269d4368bc2b5e4e9ec00653dc53d290a8eea2fb3d8d707d17f43788fcc8b6"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-1331a1e1a5715a149406900c.bin.gz",
+      "bytes": 627131,
+      "sha256": "1331a1e1a5715a149406900cd0af95213fed9779cd301b5729acd24f6dfada81"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-13724296761a235f738b126e.bin.gz",
+      "bytes": 1259446,
+      "sha256": "13724296761a235f738b126e3edf7e4b3649766397c076812d952ab56fa0068b"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-15297d803b1b683a9564c3c8.bin.gz",
+      "bytes": 235345,
+      "sha256": "15297d803b1b683a9564c3c8e3c29771acfad156a71e863974e7b9c848a65530"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-15eb29a98c19b05d35d06c95.bin.gz",
+      "bytes": 531371,
+      "sha256": "15eb29a98c19b05d35d06c95d4f8fe5cba49ea2e99876c2e5e923982896d893b"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-1c70bc1f37be7adbb0c4ad94.bin.gz",
+      "bytes": 1199955,
+      "sha256": "1c70bc1f37be7adbb0c4ad949f8359144198d62a6e74cbdda20867386395b458"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-1db7267bbc79d16b34206f13.bin.gz",
+      "bytes": 260589,
+      "sha256": "1db7267bbc79d16b34206f133af111cb2ccfef1065ab2e506170113fdc59a197"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-220cac26ba2cb0406bd6c1ea.bin.gz",
+      "bytes": 646936,
+      "sha256": "220cac26ba2cb0406bd6c1eaac6d1c45f073ff8488aca1ba23a782c962ced9d3"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-238726e09d20c326b237a269.bin.gz",
+      "bytes": 714325,
+      "sha256": "238726e09d20c326b237a2690d0b0df5c3f608222b8227a0dcdb8f51669e4270"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-29a6e0ba9f0e7b8aa6d12df4.bin.gz",
+      "bytes": 241454,
+      "sha256": "29a6e0ba9f0e7b8aa6d12df46d9fcbd3d44f359e611a3f613db06409ddd15d8b"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-29b2b2376ae20c90fa5bdacf.bin.gz",
+      "bytes": 868751,
+      "sha256": "29b2b2376ae20c90fa5bdacf35209d01bb103b72aee2a5499e39ac08f34090fb"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-2cfd3f4d3ae8c56e10f4cbc5.bin.gz",
+      "bytes": 822285,
+      "sha256": "2cfd3f4d3ae8c56e10f4cbc5fb2f890ce582b10090ef11c4b6326a129688f2b2"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-33be0429a9e859802c1761d5.bin.gz",
+      "bytes": 255968,
+      "sha256": "33be0429a9e859802c1761d5be3869f23ba548d0214921879c51f6e13a8fd020"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-33dc5c4e27ad9fc723dc5e55.bin.gz",
+      "bytes": 167790,
+      "sha256": "33dc5c4e27ad9fc723dc5e559532d2cec25c25a6fe3a95185480fcf7942f4c7b"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-3437cc76adfbc9b866677ed8.bin.gz",
+      "bytes": 1231632,
+      "sha256": "3437cc76adfbc9b866677ed816ac1a31f9164750f972fe237c5a2b7f1b923f13"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-35675e03b3c3c2fe557991b9.bin.gz",
+      "bytes": 1092995,
+      "sha256": "35675e03b3c3c2fe557991b950fa514287e229aa8674dd290ebe74e196813fe7"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-36d2e2933c7de849953a8523.bin.gz",
+      "bytes": 203930,
+      "sha256": "36d2e2933c7de849953a8523b8156939867b8c473e812c1075af4a896acb505d"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-3c9366fad6c004cb19b4bdce.bin.gz",
+      "bytes": 1967874,
+      "sha256": "3c9366fad6c004cb19b4bdce634ea24bdaae486a5c21bbc0f249c8000456f7f5"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-3e25a88b246c0a1c51519858.bin.gz",
+      "bytes": 287967,
+      "sha256": "3e25a88b246c0a1c515198585f5b15d5aaad434cead49f3b8194df36c4bc292d"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-430fc548fe13f8f59081d1dd.bin.gz",
+      "bytes": 68130,
+      "sha256": "430fc548fe13f8f59081d1dde84aacf9319421812b0c3845af7f55e8a5849858"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-43ee729cb2ef4b41e29dced3.bin.gz",
+      "bytes": 622795,
+      "sha256": "43ee729cb2ef4b41e29dced3464f21d5c3259d47a0a45dbfff44de1a78cdf5e5"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-47730b4781106cf2c10a8cd7.bin.gz",
+      "bytes": 427419,
+      "sha256": "47730b4781106cf2c10a8cd7e54ba709e833c55ff62ea6641dc9ab74c988faa7"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-5329eef936ce5d3489d35adc.bin.gz",
+      "bytes": 702702,
+      "sha256": "5329eef936ce5d3489d35adcc8120ba1de25991741c2a8460d8f579db00593ab"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-5633583b01eab24f158116c1.bin.gz",
+      "bytes": 70675,
+      "sha256": "5633583b01eab24f158116c1264900a484896e9f438983197ceb181a063566e3"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-599038c58e7df4623b21d5a2.bin.gz",
+      "bytes": 1477186,
+      "sha256": "599038c58e7df4623b21d5a2dc7850e693591c347b4a7b52f4ce603f86382ca2"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-5cfc24501ef2b388db58fdee.bin.gz",
+      "bytes": 794209,
+      "sha256": "5cfc24501ef2b388db58fdeed289bdc9a2f6b55dca53efcedfc2a9dd193842b0"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-5dcc6fb7165daf971c6e07f0.bin.gz",
+      "bytes": 608364,
+      "sha256": "5dcc6fb7165daf971c6e07f05ee0ae110b0b6a82756c1c3cc40c5991ddb0ecf2"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-61766eaa81b5fe47299bcadf.bin.gz",
+      "bytes": 188376,
+      "sha256": "61766eaa81b5fe47299bcadfe7962e8ffa6ddeb48cad735a6b43b30ac9ef52d4"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-639ca5b00ce07532adb8f75d.bin.gz",
+      "bytes": 809808,
+      "sha256": "639ca5b00ce07532adb8f75de3207f173fcae918ac6bf2d4d903934cb7e4d733"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-6b85c1618523da215242ddc0.bin.gz",
+      "bytes": 1072645,
+      "sha256": "6b85c1618523da215242ddc026d33c52774cd5d9b9fb77e7550031a058b064d6"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-723fc33757e0b1f2e6e4bef5.bin.gz",
+      "bytes": 1097943,
+      "sha256": "723fc33757e0b1f2e6e4bef5952193e689bf8dbe9b385403c19d44beab0ae8a9"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-732cd3e186fd97fbeb7be3d5.bin.gz",
+      "bytes": 736542,
+      "sha256": "732cd3e186fd97fbeb7be3d5bb307d1e254bb94fe3547433613373302c47a6ac"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-7fb86aa296a720711a3dbfc4.bin.gz",
+      "bytes": 574817,
+      "sha256": "7fb86aa296a720711a3dbfc4d1ec184f6901c7d0eebb69b9ef96917cce30cfc4"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-850e70708025e73fd0669cff.bin.gz",
+      "bytes": 256296,
+      "sha256": "850e70708025e73fd0669cff6c1e10d8c7ca4e1ea5aa8831cc0d808cf7413d57"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-8baaab913c08dcb2e8dc9604.bin.gz",
+      "bytes": 957301,
+      "sha256": "8baaab913c08dcb2e8dc9604991e8fa1bbacb10f3b19e234be383dbe36c75287"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-8bb4ca0fd0521747080946bf.bin.gz",
+      "bytes": 473238,
+      "sha256": "8bb4ca0fd0521747080946bf372a5cd6827fe86ea2d21bdf902d6409aa801232"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-8d89eb3ad1069fd12f4b8e42.bin.gz",
+      "bytes": 3826508,
+      "sha256": "8d89eb3ad1069fd12f4b8e4233819f9c27026460aa852dc253746c51a2a9eeb4"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-90ddf6c32fe53c80a4dd4ab1.bin.gz",
+      "bytes": 524174,
+      "sha256": "90ddf6c32fe53c80a4dd4ab1d44d18079cbdfaba1cc5d57c7719bcec82927c9e"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-94132cd71d19808d9289aa72.bin.gz",
+      "bytes": 992087,
+      "sha256": "94132cd71d19808d9289aa72cff9e2e8143afedc77c66af355faee8097d8b4a1"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-94e6a8ddc04daa7eb2b474f1.bin.gz",
+      "bytes": 607517,
+      "sha256": "94e6a8ddc04daa7eb2b474f16eabb8d92e9e9c14f95fc98ebc20903d0bb84455"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-9f850b96aa5f641b0a018c78.bin.gz",
+      "bytes": 694772,
+      "sha256": "9f850b96aa5f641b0a018c78ddd8185be753ef3d672c2bfae31684aaf1a0f08c"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-a1734d84e270b26456025bee.bin.gz",
+      "bytes": 498899,
+      "sha256": "a1734d84e270b26456025beeaa7bf6a6d76642966f9af4040599a910cdfebf47"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-aa80e8ac11c3c1ace3463b56.bin.gz",
+      "bytes": 211622,
+      "sha256": "aa80e8ac11c3c1ace3463b566e41842676e0b8c5d9c13a16233c2d04cc3019af"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-adfec03741d88d449cd4c701.bin.gz",
+      "bytes": 969835,
+      "sha256": "adfec03741d88d449cd4c70143f171afd39c020f74d7f5836e3a07b001facb37"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-b0430e8073307d0d86eb519c.bin.gz",
+      "bytes": 897697,
+      "sha256": "b0430e8073307d0d86eb519cf2edc29389d36cdaae07b6e6454eae746ad390d6"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-b1d7e205b65681072c7c6fff.bin.gz",
+      "bytes": 1324508,
+      "sha256": "b1d7e205b65681072c7c6fff514aeb622c5fee980854b7760d97d729af5c7a19"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-bc52953f3e84a3a176c9fe6d.bin.gz",
+      "bytes": 1530742,
+      "sha256": "bc52953f3e84a3a176c9fe6d069ed04a41e69d9e61a93a9007f36984b3dbf64f"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-be25fe8b3e6aa856d3b87625.bin.gz",
+      "bytes": 583646,
+      "sha256": "be25fe8b3e6aa856d3b8762553eac0e8223bad9f39df1f9b63c6eafd33cc0d8f"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-c5459e4d5c9b06e5d166c78b.bin.gz",
+      "bytes": 975276,
+      "sha256": "c5459e4d5c9b06e5d166c78ba75d6bf492de62f9dab10e54a8cd460959cf278e"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-c8d36a1b1598d44d0736353e.bin.gz",
+      "bytes": 157264,
+      "sha256": "c8d36a1b1598d44d0736353ea7b6c67b2dd9c71fcbb0561daa952c43caff2cb0"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-caea698d2e98117b07a4351a.bin.gz",
+      "bytes": 11805,
+      "sha256": "caea698d2e98117b07a4351aee7ace6b64650d7f503ec4cafdc28db11e0cb0bf"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-cb91b8b055764ddb38e99eb1.bin.gz",
+      "bytes": 1320245,
+      "sha256": "cb91b8b055764ddb38e99eb174d80b46c0cf14203a11231063e8a9afa4d48f8c"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-cc9df499433a748c91e4b2f1.bin.gz",
+      "bytes": 761732,
+      "sha256": "cc9df499433a748c91e4b2f1d4fbb3ed8cd87ce1abce09f9dece7aa422b63ea5"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-cceeb5ad1e427b7de7685d93.bin.gz",
+      "bytes": 710158,
+      "sha256": "cceeb5ad1e427b7de7685d932bb180331aef3f0ddb52850632c2da83066f712e"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-cffa05ca4a8a0bbb5c9673cf.bin.gz",
+      "bytes": 380817,
+      "sha256": "cffa05ca4a8a0bbb5c9673cfdd9179cf8c91d4cbc87adb63f0b8226c3607697b"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-db0e31e4362768a9fdf2d452.bin.gz",
+      "bytes": 479426,
+      "sha256": "db0e31e4362768a9fdf2d45223fb5a413c96426fdd6716cf311eb67b8e588dd2"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-dc79627df9e3f5800bee0231.bin.gz",
+      "bytes": 86315,
+      "sha256": "dc79627df9e3f5800bee0231b28e4fd95b079abb5672b3ab59393135be6ba2e3"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-e128ba5cdac56fe0119cd71a.bin.gz",
+      "bytes": 1965126,
+      "sha256": "e128ba5cdac56fe0119cd71af7a1e8761dacced122ff17e8f421312cc857070e"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-e2ea13caf541e52cad08d2ad.bin.gz",
+      "bytes": 18729,
+      "sha256": "e2ea13caf541e52cad08d2ad79c5993c97c070b59fc1c5a39c2ff5b25d609eec"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-e69c6518407e2f6334db4e72.bin.gz",
+      "bytes": 564114,
+      "sha256": "e69c6518407e2f6334db4e725f71224b56596a444a63d1c792f13d5e41b1d882"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-e965b4ee5f4d494875869f69.bin.gz",
+      "bytes": 759010,
+      "sha256": "e965b4ee5f4d494875869f695923f476545d788c3cf48b485efcbf9dc53dd9a1"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-f5a280f3115e3c6fbad6e391.bin.gz",
+      "bytes": 1629887,
+      "sha256": "f5a280f3115e3c6fbad6e39162ab562753a31fa94484738b017255f5254d2604"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-f7a4611c5a6becca90fc5a47.bin.gz",
+      "bytes": 138553,
+      "sha256": "f7a4611c5a6becca90fc5a4737aeec3e5575fd1c2708cd198a9f1f03562bf901"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-f99fea79384ea20845fc0ae1.bin.gz",
+      "bytes": 762289,
+      "sha256": "f99fea79384ea20845fc0ae12eb51bc74c248a0724cbac51586bc5f57fa0bdde"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-fa520bd793718c41190d9c73.bin.gz",
+      "bytes": 691470,
+      "sha256": "fa520bd793718c41190d9c7393b57db3cf91632a7a5f623eb232f8b8c4199e7a"
+    },
+    {
+      "path": "app/assets/runtime-v46/scene/startup-delta-fffc37820993c418ad88cd2a.bin.gz",
+      "bytes": 341882,
+      "sha256": "fffc37820993c418ad88cd2a374a09016c3053b0678d32f6cfa568e8b79c5efd"
+    },
+    {
       "path": "app/assets/runtime-v46/scene/textures-6da1aea0a4b85f405f8df8bd.js",
       "bytes": 2905377,
       "sha256": "6da1aea0a4b85f405f8df8bde78d1a78f99bc022418dc396afad61a2b34ae673"
@@ -1223,8 +1573,8 @@
     }
   ],
   "archive": {
-    "file": "pku-3d-assets-1.5.3.zip",
-    "bytes": 316789289,
-    "sha256": "e961293f6379bf05066fb3dc04284452cb3520734fd0ec780bde30ee19c80418"
+    "file": "pku-3d-assets-1.5.4.zip",
+    "bytes": 368103583,
+    "sha256": "08fefa80c1633ab1e37170a00db8f5e07474cef39e0e71433d585a534f74735c"
   }
 }

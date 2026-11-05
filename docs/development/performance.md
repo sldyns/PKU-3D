@@ -1,5 +1,15 @@
 # Rendering performance
 
+## 1.5.4 lossless startup transport
+
+The unchanged complete scene has 99 chunks. Explicitly approved integer delta coding is selected for 70 chunks; one retains the existing modern codec and 28 retain legacy. Selected compressed bytes fall from 100,255,740 to 86,273,657, a 13.95% reduction. Three deterministic packs replace 99 chunk requests. Every original gzip and script fallback remains in the distribution, so archive size and selected network bytes are separate quantities. No geometry, textures, instance order, shadow/reflection resolution or antialiasing settings are reduced. Startup still waits for the complete scene and required rendering resources.
+
+Matched fresh hardware-Chrome runs used High, 1440 × 1000 at DPR 1, two alternating ABBA blocks per profile, the unchanged startup observer and original application fence. The network model applied 300 ms scene-response latency and one shared 4 MiB/s budget. Median first-render completion fell from 26,935.55 to 23,480.8 ms (12.83%); both blocks improved and the original ten-percent network target passed. This is a controlled network model, not a universal public-site loading time or physical presentation measurement.
+
+With local unshaped IO, first-render completion changed from 1,206.5 to 1,256 ms and reported uncollected heap from 154,000,160 to 158,935,941 bytes. Both stayed within their predeclared five-percent limits; local loading is not claimed to be faster. No forced garbage collection or extra GPU fence was used. Direct BYOB reads transfer the final per-chunk buffer rather than accumulating temporary network backing stores; compressed ownership stays bounded and is released after decoding.
+
+Independent checks compared every original decoded byte and compiled instance record for all 99 chunks. Twelve complete RGBA and HDR pairs across High, Medium and Low were byte-identical, with six completed-scene context recoveries. Real-browser failure tests also covered a missing first pack and context loss during headers and body transfer. Local-file loading, disposal and quality persistence passed. These checks cover the stated fixtures and preserve the existing interaction-performance limits below; they do not establish stable 60 FPS.
+
 ## 1.5.3 response-focused update
 
 Medium and Low can reuse at most two optional instance-buffer stores per main, shadow and reflection pass, with at most six stores and a shared 64 MiB GPU reservation budget. Each store has explicit reader/fence ownership. Busy, unsupported or failed allocations use the original base buffer; the frame-admission queue remains bounded to two. Complete instance bits, draw order, source images and rendering settings are unchanged. High uses its original upload and selection paths.

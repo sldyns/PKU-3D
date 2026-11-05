@@ -69,6 +69,8 @@
     "panel-layout-transition.test.cjs",
     "studentcenter195-side-stairs.test.cjs",
     "scene-codec.test.cjs",
+    "scene-stream.test.cjs",
+    "scene-startup-codec.test.cjs",
     "scene-worker-descriptor.test.cjs",
     "initial-visibility.test.cjs",
     "initial-reflection.test.cjs",
@@ -87,6 +89,8 @@
     "runtime-scene-package284.test.py",
     "assets-roundtrip.test.py",
     "test_scene_codec_assets.py",
+    "scene-startup-packs.test.py",
+    "publish-transport.test.py",
     "detail-compact-markup.test.py"
   ]
 }

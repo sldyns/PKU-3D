@@ -5,12 +5,14 @@ import base64, hashlib, html, json, re, shutil, subprocess, sys
 R = Path(__file__).resolve().parent
 sys.path.insert(0, str(R.parent / 'scripts'))
 from scene_codec_assets import codec_assets
+from scene_startup_packs import build_startup_packs, approved_startup_codecs
+from publish import copy_artifact
 MAP_LINKS = {
     'satellite': ('卫星地图 ↗', 'https://www.arcgis.com/apps/mapviewer/index.html?basemapUrl=https%3A%2F%2Fservices.arcgisonline.com%2FArcGIS%2Frest%2Fservices%2FWorld_Imagery%2FMapServer&center=116.304%2C39.992&level=17'),
     'standard': ('标准地图 ↗', 'https://www.openstreetmap.org/#map=17/39.992/116.304'),
 }
 
-def runtime_scene_package(source):
+def runtime_scene_package(source, transport=None):
     """Keep recovery metadata; omit only unused per-bucket audit hashes."""
     prefix = 'YY.SCENE_PACKAGE46='
     text = source.strip()
@@ -23,6 +25,8 @@ def runtime_scene_package(source):
          if key not in ('dataHash', 'spatialHash')}
         for bucket in package['buckets']
     ]}
+    if transport is not None:
+        projected['transport'] = transport
     return prefix + json.dumps(projected, ensure_ascii=False, separators=(',', ':')) + ';'
 
 def runtime_builder_data(file, source):
@@ -125,6 +129,15 @@ destination = R.parent / 'dist/assets'
 if destination.parent.exists():
     shutil.rmtree(destination.parent)
 destination.mkdir(parents=True, exist_ok=True)
+asset_manifest = json.loads((R / 'assets-manifest.json').read_text())
+scene_prefix = 'app/assets/runtime-v46/scene/'
+scene_transport = build_startup_packs(
+    scene_manifest, R / 'assets/runtime-v46/scene',
+    destination / 'runtime/scene',
+    {row['path'][len(scene_prefix):]: row['sha256']
+     for row in asset_manifest['files'] if row['path'].startswith(scene_prefix)},
+    derived=approved_startup_codecs(scene_manifest, R / 'assets/runtime-v46/scene',
+                                  R / 'data/startup-codec-v1.json', R.parent / 'scripts/build-startup-codec.cjs'))
 page = (R / 'index.html').read_text()
 scripts = re.findall(r'<script src="([^"]+)"></script>', page)
 code = []
@@ -161,7 +174,7 @@ for file in scripts:
     if file == 'src/reference-gallery.js':
         source = 'YY.REFERENCE_GALLERY={images:{},places:{}};'
     if file == 'src/scene-package46.js':
-        projected = runtime_scene_package(source)
+        projected = runtime_scene_package(source, scene_transport)
         # Apply the release path rewrite to the payload before emitting its file.
         payload = projected[len('YY.SCENE_PACKAGE46='):-1].replace('assets/runtime-v46/', 'assets/runtime/')
         source = emit_runtime_payload('YY.PICK_RANGE_CULL', pick_cull.replace('assets/runtime-v46/', 'assets/runtime/')) + '\n' + emit_runtime_payload('YY.SCENE_PACKAGE46', payload) + '\ndelete globalThis.__PKU_RUNTIME_DATA;'
@@ -189,7 +202,7 @@ for file in sorted(paths):
     target.parent.mkdir(parents=True, exist_ok=True)
     source = R / file
     if not target.exists() or target.stat().st_size != source.stat().st_size or target.stat().st_mtime_ns < source.stat().st_mtime_ns:
-        shutil.copy2(source, target)
+        copy_artifact(source, target)
 page = re.sub(r'<script src="([^"]+)"></script>', '', page)
 for mode, (label, href) in MAP_LINKS.items():
     page = re.sub(r'<button data-mode="' + mode + r'"[^>]*>.*?</button>', '<a href="' + html.escape(href, quote=True) + '" target="_blank" rel="noopener" title="在地图官网打开">' + label + '</a>', page)
@@ -202,5 +215,6 @@ page = page.replace('src/assets/', 'assets/')
 for notice in ('LICENSE', 'DATA_LICENSE.md'):
     shutil.copy2(R.parent / notice, destination.parent / notice)
 summary = {'version': (R.parent / 'VERSION').read_text().strip(), 'htmlBytes': len(page.encode()), 'scriptBytes': len(bundle.encode()) + sum(item['bytes'] for item in runtime_data), 'runtimeData': runtime_data, 'sceneCompressedBytes': manifest['packedStats']['compressedBytes'], 'sceneSourceHash': manifest['sourceHash'], 'images': len(gallery['images']), 'copiedAssets': len(paths), 'bundle': bundle_name}
+summary['sceneTransport'] = {'parts': len(scene_transport['parts']), 'bytes': sum(part['bytes'] for part in scene_transport['parts']), 'maxPartBytes': max(part['bytes'] for part in scene_transport['parts'])}
 (destination / 'build-manifest.json').write_text(json.dumps(summary, indent=2))
 print('Built fast page:', json.dumps(summary))

@@ -91,6 +91,14 @@ Prepared-scene decoding interleaves instance-bearing chunks with mesh-only chunk
 
 Visible instance records are gathered in consecutive spans using typed-array copies. A group skips per-instance checks only when its conservative bounds and minimum and maximum detail sizes prove every record passes or fails the unchanged thresholds; isolation, vegetation hiding and route filtering retain individual checks. Ambiguous groups use the existing tests. Gaps terminate a copy span, and buffer growth preserves earlier records and pending spans.
 
+## Lossless startup packs
+
+`node scripts/build-startup-codec.cjs` generates `app/data/startup-codec-v1.json` from the current baked scene. Approval pins the exact parent manifest, source and encoder hashes, each original input, compressed alternative and decoded raw checksum. A candidate must round-trip every raw byte and save at least five percent for its chunk. Run `npm run assets:pack`, then build the website. `scripts/scene_startup_packs.py` validates the explicit approval and writes deterministic packs of at most 32 MiB. It never discovers alternatives by scanning a directory. A new bake cannot inherit an approval for different inputs.
+
+The integer transform uses modular differences, zigzag and byte planes; it does not quantize floating-point values or change vertex/index order. The SIMD inverse in `app/tools/scene-startup-delta.wat` imports the existing fixed 512 KiB transpose memory, with no extra memory or growth. Its embedded kernel and source hashes are tested together; typed-array and explicit little-endian DataView inverses remain fallbacks.
+
+On supported HTTP loading, a BYOB byte reader writes directly into the final chunk allocation and re-adopts its transferred backing buffer. Keep exactly two workers, one decoding job per worker, the seven-millisecond upload budget and the complete readiness barrier. A missing first pack or unsupported transport selects the original chunk loader before decoding begins. A later pack failure remains terminal; do not add cross-job retries or HTTP-to-script recovery. Worker-local decode fallback keeps its existing boundary. Disposal aborts scene IO, rejects waiting jobs and terminates the workers; context restoration creates fresh ownership. `file://` uses original script-embedded gzip. Preserve all original assets and the official decoder license in the checksum-pinned archive.
+
 ## Optional codec and first-frame preparation contracts
 
 The generated website separates the campus, architecture archive, scene manifest and pick descriptors into four data-only classic scripts, deferred in order before the application. This lets the browser compile data and application code independently. The application takes each value at its original initialization position and deletes the temporary staging object. Keep literal syntax, original numeric text, signed zero, member order and executable data adapters intact; wrapping these payloads in `JSON.parse` adds large string allocations. The full source manifests remain the cache authorities, and startup still waits for every scene and rendering resource. Include all data scripts in release hashes and total script-byte accounting.
@@ -115,7 +123,7 @@ Separate maintenance releases from renderer changes. A version-only runtime edit
 
 Run `npm run deploy` to build and push the generated website to `gh-pages`. GitHub Pages publishes that branch at `https://sldyns.github.io/PKU-3D/`. The `main` branch contains the editable source; `gh-pages` contains only the generated website. Publishing requires Git push access to this repository.
 
-The publisher clones the generated branch without checking out its old files and uses filesystem copy-on-write where supported, with ordinary copies as a portable fallback. It still stages the complete generated tree, so files removed from the build are removed from the published site.
+The publisher uses a blob-filtered clone without checking out the old generated site, disables lazy fetching and rename detection, and pushes with bounded packing through an ordinary fast-forward. It uses filesystem copy-on-write where supported, with ordinary copies as a portable fallback. It still stages the complete generated tree, so files removed from the build are removed from the published site. The local partial-clone fixture covers updates, removals and unchanged repeat publication.
 
 ## Local reference material
 

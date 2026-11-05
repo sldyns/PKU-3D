@@ -48,6 +48,7 @@ node_modules/
 !/app/data/pick-cull-profile.json
 !/app/data/scene-atlas-baseline46.json
 !/app/data/scene-atlas-derived879.json
+!/app/data/startup-codec-v1.json
 
 # Maintained build tools; source-specific research recipes remain local.
 /app/tools/*
@@ -61,6 +62,7 @@ node_modules/
 !/app/tools/shared-pages208-layout.cjs
 !/app/tools/update-shared-pages208-fixture.cjs
 !/app/tools/scene-transpose237.wat
+!/app/tools/scene-startup-delta.wat
 
 # Portable maintained regression suite; historical model experiments stay local.
 /app/tests/*
@@ -179,6 +181,10 @@ node_modules/
 !/app/tests/initial-reflection.test.cjs
 !/app/tests/initial-visibility.test.cjs
 !/app/tests/scene-codec.test.cjs
+!/app/tests/scene-stream.test.cjs
+!/app/tests/scene-startup-codec.test.cjs
+!/app/tests/scene-startup-packs.test.py
+!/app/tests/publish-transport.test.py
 !/app/tests/scene-worker-descriptor.test.cjs
 
 !/app/tests/detail-compact-focus.test.cjs

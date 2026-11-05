@@ -30,7 +30,7 @@ function fixture(count,detailWidth){
  const record={mesh:0,count,data:{chunk:0,offset:0,length:count*28},spatial:{chunk:0,offset:count*28*4,length:count*5},key:'fixture',dataHash:'unused',spatialHash:'unused',lods:[],qualityRole:'unused'};
  const chunk={rawBytes:raw.byteLength,sha256:createHash('sha256').update(Buffer.from(raw)).digest('hex'),file:'fixture.gz',shuffle:0};
  let message;
- vm.runInNewContext(messageLines[0],{index:0,chunk,base:'https://scene.test/',encoded:undefined,prefetchURL:undefined,prefetchAlternative:undefined,alternative:null,chunks:[{buckets:[record]}],m:{meshes:[{detailWidth}]},worker:{postMessage(value){message=value;}}});
+ vm.runInNewContext(messageLines[0],{index:0,chunk,base:'https://scene.test/',encoded:undefined,prefetchURL:undefined,prefetchAlternative:undefined,alternative:null,transport:undefined,chunks:[{buckets:[record]}],m:{meshes:[{detailWidth}]},worker:{postMessage(value){message=value;}}});
  message.buckets=message.buckets.map(strictFields);return{raw,message};
 }
 test('actual worker prepare reads only fields supplied by the actual message',async()=>{

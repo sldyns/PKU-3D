@@ -8,7 +8,7 @@
 
 **[在线演示](https://sldyns.github.io/PKU-3D/)** · [English](README.md) · [版本发布](https://github.com/sldyns/PKU-3D/releases) · [贡献指南](CONTRIBUTING.zh-CN.md)
 
-[![Version](https://img.shields.io/badge/version-1.5.3-8b302c)](https://github.com/sldyns/PKU-3D/releases/tag/v1.5.3)
+[![Version](https://img.shields.io/badge/version-1.5.4-8b302c)](https://github.com/sldyns/PKU-3D/releases/tag/v1.5.4)
 [![WebGL 2](https://img.shields.io/badge/rendering-WebGL%202-2f6555)](https://sldyns.github.io/PKU-3D/)
 
 </div>
@@ -41,7 +41,7 @@ PKU-3D 是北京大学燕园校区的交互式三维模型，包含楼宇、院�
 
 现有测试中，镜头交互仍未达到稳定 60 FPS。测量结果与验证范围见[性能说明](docs/development/performance.md)。
 
-1.5.3 为 Medium、Low 增加有上限的实例缓冲复用与精确可见性预备。既有配对输入对照记录到这两个档位的响应 P95 约降低 13%，渲染耗时基本持平。High 仍为默认，保留原渲染路径。可选优化会增加内存占用，具体范围与限制见[性能说明](docs/development/performance.md)。
+1.5.4 将选中的场景下载量从 100.3 MB 减至 86.3 MB，并通过三个请求流式读取原有 99 个块。可逆整数编码保留全部解码模型字节；High 仍为默认，原始图片、阴影、反射和抗锯齿保持不变。原格式及离线资源继续保留。启动实测的适用范围与沿用的 1.5.3 响应优化见[性能说明](docs/development/performance.md)。
 
 ## 操作
 

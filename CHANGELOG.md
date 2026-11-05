@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.4
+
+- Reduce selected scene transfer from 100,255,740 to 86,273,657 bytes with reversible integer delta coding; preserve all 99 raw scene chunks, model detail, source images and rendering settings.
+- Stream the scene through three bounded packs using direct BYOB reads, two decoding workers and the existing upload budget. Keep legacy assets and local-file loading.
+- Share the existing fixed transpose memory with a small SIMD inverse kernel; retain typed-array and DataView decoding fallbacks. Abort pending scene IO and retire workers on disposal or context loss.
+- Verify all raw geometry and instance metadata, 12 complete RGBA/HDR pairs, context recovery, transport failure and offline fallback. A matched network model measured about 12.8% lower first-render completion; actual network and device timing varies.
+- Keep generated-site publishing independent of old blob downloads through partial clones, bounded packing and ordinary fast-forward pushes.
+
 ## 1.5.3
 
 - Reuse bounded, independently fenced instance-buffer stores in Medium/Low, with the original upload path as fallback. Keep the two-frame admission queue and complete ordered instance payloads.

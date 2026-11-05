@@ -22,6 +22,10 @@ _codec_spec = importlib.util.spec_from_file_location(
 _codec_module = importlib.util.module_from_spec(_codec_spec)
 _codec_spec.loader.exec_module(_codec_module)
 codec_assets = _codec_module.codec_assets
+_startup_spec = importlib.util.spec_from_file_location(
+    '_pku_startup_assets', Path(__file__).with_name('scene_startup_packs.py'))
+_startup_module = importlib.util.module_from_spec(_startup_spec)
+_startup_spec.loader.exec_module(_startup_module)
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = Path('app')
@@ -50,6 +54,8 @@ def inputs():
     cache = base / 'runtime-v46/scene'
     meta = json.loads((cache / 'manifest.json').read_text())
     files.update(cache / name for name in codec_assets(meta, cache))
+    startup = _startup_module.approved_startup_codecs(meta, cache, ROOT / SOURCE / 'data/startup-codec-v1.json', ROOT / 'scripts/build-startup-codec.cjs')
+    files.update(cache / row['file'] for row in startup.values())
     files.update(cache / x for x in ('manifest.json', 'bucket-hashes.json', meta['atlas']))
     for chunk in meta['chunks']:
         files.update(cache / chunk[x] for x in ('file', 'fallback'))

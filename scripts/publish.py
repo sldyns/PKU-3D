@@ -13,7 +13,8 @@ REPOSITORY = 'https://github.com/sldyns/PKU-3D.git'
 
 
 def run(*args, cwd=ROOT):
-    return subprocess.run(args, cwd=cwd, check=True)
+    return subprocess.run(args, cwd=cwd, check=True,
+                          env={**os.environ, 'GIT_NO_LAZY_FETCH': '1'})
 
 
 def read(*args):
@@ -34,7 +35,8 @@ def publish():
     revision = read('git', 'rev-parse', '--short', 'HEAD')
     with tempfile.TemporaryDirectory(prefix='pku-3d-pages-') as folder:
         destination = Path(folder) / 'site'
-        run('git', 'clone', '--depth', '1', '--single-branch', '--branch', 'gh-pages', '--no-checkout', REPOSITORY, str(destination))
+        run('git', 'clone', '--filter=blob:none', '--depth', '1', '--single-branch', '--branch', 'gh-pages', '--no-checkout', REPOSITORY, str(destination))
+        run('git', 'config', 'diff.renames', 'false', cwd=destination)
         for item in destination.iterdir():
             if item.name == '.git':
                 continue
@@ -56,8 +58,8 @@ def publish():
             raise SystemExit(result.returncode)
         for key in ('user.name', 'user.email'):
             run('git', 'config', key, read('git', 'config', '--get', key), cwd=destination)
-        run('git', 'commit', '-m', 'Publish PKU-3D from ' + revision, cwd=destination)
-        run('git', 'push', 'origin', 'gh-pages', cwd=destination)
+        run('git', 'commit', '--quiet', '-m', 'Publish PKU-3D from ' + revision, cwd=destination)
+        run('git', '-c', 'pack.window=0', 'push', '--no-thin', 'origin', 'gh-pages', cwd=destination)
     print('Pages will publish this build at https://sldyns.github.io/PKU-3D/')
 
 
