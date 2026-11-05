@@ -1,7 +1,7 @@
 {
-  "version": "1.5.3",
+  "version": "1.5.4",
   "htmlBytes": 15878,
-  "scriptBytes": 15421466,
+  "scriptBytes": 15438771,
   "runtimeData": [
     {
       "file": "data-25ea5ae72b953f7f.js",
@@ -19,14 +19,19 @@
       "sha256": "64000b288ad43f6b846b9213887859874da2d926db189716dbf8286fc9c2ad1b"
     },
     {
-      "file": "data-2fb8587ae36f8ce7.js",
-      "bytes": 7499478,
-      "sha256": "2fb8587ae36f8ce7fdbb19ec34175329e4a7f10b75bd3b80ac61d3b7e15c8503"
+      "file": "data-2f5f558f333bbd54.js",
+      "bytes": 7505503,
+      "sha256": "2f5f558f333bbd54fa74e34f154d8b7efe4a15705751ed156a57178bf9ad579f"
     }
   ],
   "sceneCompressedBytes": 112351892,
   "sceneSourceHash": "886e3dec81d5491f2eb62380cd8c062fdd20afc12a103ce891d29b0c2bd06e18",
   "images": 0,
   "copiedAssets": 244,
-  "bundle": "app-d682cf1b2784fbe8.js"
+  "bundle": "app-baa74c95f4a4e10b.js",
+  "sceneTransport": {
+    "parts": 3,
+    "bytes": 86273657,
+    "maxPartBytes": 31570401
+  }
 }
