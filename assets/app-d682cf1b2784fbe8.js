@@ -181,6 +181,95 @@ YY.MATERIAL_ATLAS="assets/materials-display.jpg";YY.TEXTURE_FALLBACK46="assets/r
   }
   return true;
  }
+ // Private optional binary64 SIMD batch kernel; the original scalar path
+ // remains authoritative for unsupported contexts, epochs and resources.
+ const wasmArenas195=new WeakMap(),wasmProofs195=new WeakMap(),wasmContexts195=new WeakSet(),wasmArrayIterator195=Array.prototype[Symbol.iterator],wasmMapIterator195=Map.prototype[Symbol.iterator];
+ let wasmModule195,wasmEngineMethods195;
+ const wasmLittleEndian195=new Uint8Array(new Uint32Array([1]).buffer)[0]===1;
+ function wasmArena195(epoch){
+  if(!epoch||typeof epoch!=='object'||!wasmLittleEndian195)return null;
+  if(wasmArenas195.has(epoch))return wasmArenas195.get(epoch);
+  let arena=null;
+  try{
+   if(wasmModule195===undefined){
+    try{wasmModule195=new WebAssembly.Module(Uint8Array.from(atob('AGFzbQEAAAABDAFgB39/f39/f38BfwMCAQAFBgEBgAKAAgcSAgZtZW1vcnkCAAVncm91cAAACvIEAe8EAgl/C3sCQANAIAcgA08NASAAIAIgB2pBAnRqIQggACABQQZsaiACIAdqQQN0aiEJIAj9XQIA/V8hECAIIAFq/V0CAP1fIREgCCABQQJsav1dAgD9XyESIAggAUEDbGr9XQIA/V8hE/0M/////////////////////yEUIAdBAWogA08EQP0M//////////8AAAAAAAAAACEUCyAERQRAQQAhCgJAA0AgCiAGQQV0Tw0BIBQgCisDAP0UIBD98gEgCisDCP0UIBH98gH98AEgCisDEP0UIBL98gH98AEgCisDGP0U/fABIBP97QH9Sf1PIRQgFP1TRQ0BIApBIGohCgwACwsLIBT9xAEhDCAFIAxBAEdxBEAgEEGACCsDAP0U/fEBIRUgEUGICCsDAP0U/fEBIRYgEkGQCCsDAP0U/fEBIRcgFSAV/fIBIBYgFv3yAf3wASAXIBf98gH98AEhGCAJ/QADACEZIBlBmAgrAwD9FP3yAUQzMzMzMzPrP/0U/fMBIRogFCAZRAAAAAAAAAAA/RT9SEQAAAAAAADwP/0UIBj99QEgGiAa/fIB/Ur9Tv1PIRQgCCABQQRsav1dAgD9X0GYCCsDAP0U/fIBRJqZmZmZmfk//RT98wEhGiAUIAggAUEFbGr9XQIA/V9EAAAAAAAAAAD9FP1HIBhEAAAAAACB8ED9FP1MIBggGiAa/fIB/Ur9Tv1O/U8hFAsgFP3EASELIA8gDGkgC2lraiEPIAdBIEkEQCANIAsgB3RyIQ0FIA4gCyAHQSBrdHIhDgsgB0ECaiEHDAALC0GAECANNgIAQYQQIA42AgAgDwsAqwEEbmFtZQKjAQEAGwAEYmFzZQEGc3RyaWRlAgVzdGFydAMFY291bnQEBmluc2lkZQUHZW5hYmxlZAYGcGxhbmVzBwFqCAJhdAkEYXQ2NAoFcGxhbmULBGJpdHMMB3Zpc2libGUNAmxvDgJoaQ8GY3VsbGVkEAF4EQF5EgF6EwFyFAZhY3RpdmUVAmR4FgJkeRcCZHoYCGRpc3RhbmNlGQV3aWR0aBoFbGltaXQ='),c=>c.charCodeAt(0)));}catch{wasmModule195=false;}
+   }
+   if(wasmModule195){const instance=new WebAssembly.Instance(wasmModule195),buffer=instance.exports.memory.buffer;
+    if(buffer.byteLength===16777216)arena={instance,buffer,f32:new Float32Array(buffer),f64:new Float64Array(buffer),u32:new Uint32Array(buffer),used:4096,buckets:0,instances:0,failed:false,token:null};
+   }
+  }catch{}
+  wasmArenas195.set(epoch,arena);return arena;
+ }
+ function releaseWasm195(epoch){
+  const a=epoch&&wasmArenas195.get(epoch);if(!a)return;
+  a.failed=true;a.token=null;a.instance=null;a.buffer=null;a.f32=null;a.f64=null;a.u32=null;wasmArenas195.delete(epoch);
+ }
+ function* prepareWasm195(bucket,epoch){
+  wasmProofs195.delete(bucket);
+  const own=k=>Object.getOwnPropertyDescriptor(bucket,k)?.value;
+  const data=own('data'),sp=own('spatial'),groups=own('groups'),flags=own('essentialFlags'),surface=own('surfaceWidths'),count=own('count'),n=data?.length/28;
+  if(!epoch||!(data instanceof Float32Array)||!(sp instanceof Float32Array)||!(groups instanceof Float64Array)||!(flags instanceof Uint8Array)||(surface!==null&&!(surface instanceof Float64Array))||!Number.isInteger(n)||n<128||count!==n||sp.length!==n*5||flags.length!==n||surface&&surface.length!==n||groups.length!==Math.ceil(n/64)*5)return;
+  if([data,sp,groups,flags,surface].some(a=>a&&(Object.getPrototypeOf(a.buffer)!==ArrayBuffer.prototype||a.buffer.resizable)))return;
+  const arena=wasmArena195(epoch);if(!arena||arena.failed)return;
+  const padded=(n+1)&~1,stride=padded*4,base=arena.used,next=base+stride*8;
+  if(!Number.isSafeInteger(next)||next>arena.buffer.byteLength)return;
+  // Reserve before yielding. Invalid records leave a bounded unused reservation;
+  // they never rewind past another concurrent builder's published allocation.
+  arena.used=next;const f=arena.f32,offset=base/4,widthOffset=(base+stride*6)/8;
+  try{for(let k=0;k<n;k++){
+   const j=k*5,i=k*28,id=data[i+21],x=sp[j],y=sp[j+1]+(id===0?0*data[i+23]:0),z=sp[j+2],r=sp[j+3],size=sp[j+4],width=data[i+20]===38?size:(surface?surface[k]:0);
+   if(![id,x,y,z,r,size,width].every(Number.isFinite)||r<0||(id>=950000&&id<960000))return;
+   f[offset+k]=x;f[offset+padded+k]=y;f[offset+padded*2+k]=z;f[offset+padded*3+k]=r;f[offset+padded*4+k]=size;f[offset+padded*5+k]=flags[k]||id===0?1:0;arena.f64[widthOffset+k]=width;
+    // Original binary32 fields and Boolean only; width stays binary64.
+    // Effective Y includes the original signed-zero addition.
+    if(!Object.is(f[offset+padded+k],y))return;
+   if((k&63)===63){yield;if(arena.failed)return;}
+  }}catch{return;}
+  wasmProofs195.set(bucket,{epoch,data,sp,groups,flags,surface,count:n,arena,base,stride,lo:0,hi:0});arena.buckets++;arena.instances+=n;
+ }
+ function registerWasmEngine195(proto){
+  const names=['buildVisiblePlan','visibleRanges','instanceCache','groupDraws','mergePage208','schedulePackedVisibility206','cancelPackedVisibility206'];
+  if(names.some(k=>typeof proto[k]!=='function'))return;
+  wasmEngineMethods195={proto,methods:Object.fromEntries(names.map(k=>[k,proto[k]])),select:Y.Visibility.select,packed:Y.Visibility.packedSelect195,indexed:Y.Visibility.indexedBuckets,prepare:Y.Visibility.preparePacked206};
+ }
+ function wasmContext195(planes,eye,focal,state,scratch,epoch,engine){
+  const trusted=wasmEngineMethods195,arena=epoch&&wasmArenas195.get(epoch);
+  if(!trusted||Y.Visibility.preparePacked206!==trusted.prepare||!arena||arena.failed||Object.getPrototypeOf(engine)!==trusted.proto||Object.getOwnPropertyDescriptor(Y.Visibility,'select')?.value!==trusted.select||Object.getOwnPropertyDescriptor(Y.Visibility,'packedSelect195')?.value!==trusted.packed||Object.getOwnPropertyDescriptor(Y.Visibility,'indexedBuckets')?.value!==trusted.indexed||!Number.isFinite(focal))return null;
+  for(const[k,v]of Object.entries(trusted.methods)){const d=Object.getOwnPropertyDescriptor(engine,k)||Object.getOwnPropertyDescriptor(trusted.proto,k);if(d?.value!==v)return null;}
+  const buckets=Object.getOwnPropertyDescriptor(engine,'buckets')?.value,data=Object.getOwnPropertyDescriptor(scratch,'data')?.value;
+  if(!(buckets instanceof Map)||Object.getPrototypeOf(buckets)!==Map.prototype||Object.getOwnPropertyDescriptor(buckets,Symbol.iterator)||Map.prototype[Symbol.iterator]!==wasmMapIterator195||Array.prototype[Symbol.iterator]!==wasmArrayIterator195||!(data instanceof Float32Array)||Object.getPrototypeOf(scratch)!==Object.prototype)return null;
+  const stateKeys=['selected','isolate','explode','vegetation','detailLOD'];
+  if(Object.getPrototypeOf(state)!==Object.prototype&&Object.getPrototypeOf(state)!==null)return null;
+  const values={};for(const k of stateKeys){const d=Object.getOwnPropertyDescriptor(state,k);if(d&&!('value'in d)||!d&&k in state)return null;values[k]=d?.value;}
+  if(values.selected!==0||values.isolate!==0||values.explode!==0||values.vegetation!==true||![undefined,true,false].includes(values.detailLOD))return null;
+  if(!Array.isArray(eye)||Object.getPrototypeOf(eye)!==Array.prototype||eye.length!==3)return null;
+  const xyz=[];for(let k=0;k<3;k++){const x=Object.getOwnPropertyDescriptor(eye,String(k))?.value;if(!Number.isFinite(x))return null;xyz.push(x);}
+  if(!Array.isArray(planes)||Object.getPrototypeOf(planes)!==Array.prototype||planes.length<1||planes.length>32||Object.getOwnPropertyDescriptor(planes,Symbol.iterator))return null;
+  const coefficients=[];for(let k=0;k<planes.length;k++){
+   const p=Object.getOwnPropertyDescriptor(planes,String(k))?.value;
+   if(!Array.isArray(p)||Object.getPrototypeOf(p)!==Array.prototype||p.length!==4)return null;
+   for(let j=0;j<4;j++){const value=Object.getOwnPropertyDescriptor(p,String(j))?.value;if(!Number.isFinite(value))return null;coefficients.push(value);}
+  }
+  const token={planes,eye,focal,state,scratch,epoch,arena,xyz,coefficients,detailLOD:values.detailLOD,enabled:values.detailLOD!==false};wasmContexts195.add(token);return token;
+ }
+ function endWasmContext195(token){if(token)wasmContexts195.delete(token);}
+ function wasmProof195(bucket,data,sp,groups,planes,eye,focal,state,out,epoch,token){
+  if(!token||!wasmContexts195.has(token)||token.epoch!==epoch||token.planes!==planes||token.eye!==eye||token.focal!==focal||token.state!==state||token.scratch.data!==out||token.arena.failed)return null;
+  if(state.selected!==0||state.isolate!==0||state.explode!==0||state.vegetation!==true||state.detailLOD!==token.detailLOD)return null;
+  const proof=wasmProofs195.get(bucket);
+  if(!proof||proof.epoch!==epoch||proof.arena!==token.arena||proof.data!==data||proof.sp!==sp||proof.groups!==groups||proof.flags!==bucket.essentialFlags||proof.surface!==bucket.surfaceWidths||proof.count!==bucket.count||data.length!==proof.count*28||sp.length!==proof.count*5||groups.length!==Math.ceil(proof.count/64)*5||proof.flags.length!==proof.count||proof.surface&&proof.surface.length!==proof.count)return null;
+  if(data.buffer===out.buffer||sp.buffer===out.buffer||groups.buffer===out.buffer||proof.flags.buffer===out.buffer||proof.surface&&proof.surface.buffer===out.buffer)return null;
+  return proof;
+ }
+ function wasmGroup195(proof,token,start,count,inside,enabled){
+  const a=proof.arena;if(a.failed||enabled!==token.enabled)return null;
+  try{
+   if(a.token!==token){a.f64.set(token.coefficients,0);a.f64.set([...token.xyz,token.focal],128);a.token=token;}
+   const culled=a.instance.exports.group(proof.base,proof.stride,start,count,inside?1:0,enabled?1:0,token.planes.length);proof.lo=a.u32[512];proof.hi=a.u32[513];return culled;
+  }catch{a.failed=true;return null;}
+ }
+ function wasmStatus195(epoch){const a=epoch&&wasmArenas195.get(epoch);return a?{memoryBytes:a.buffer.byteLength,usedBytes:a.used,buckets:a.buckets,instances:a.instances,usedAtLeastOnce:a.token!==null,failed:a.failed}:null;}
+
  function select(bucket,planes,eye,focal,state,scratch,ownedScratch=false,appendToStream=false,result={count:0,culled:0},insideEpoch=null){
   // Engine may provide one synchronous result slot; ordinary callers still
   // receive a fresh object. Reset before any early exit or possible error.
@@ -279,6 +368,109 @@ YY.MATERIAL_ATLAS="assets/materials-display.jpg";YY.TEXTURE_FALLBACK46="assets/r
   if(runStart>=0)out.set(runStart===0&&runEnd===data.length?data:data.subarray(runStart,runEnd),offset+runOutput*28);
   result.count=count;result.culled=culled;return result;
  }
+ function packedSelect195(bucket,planes,eye,focal,state,scratch,ownedScratch=false,appendToStream=false,result={count:0,culled:0},insideEpoch=null,fastContext195=null){
+  // Engine may provide one synchronous result slot; ordinary callers still
+  // receive a fresh object. Reset before any early exit or possible error.
+  result.count=0;result.culled=0;
+  const data=bucket.data,sp=bucket.spatial,iso=state.isolate,only=bucket.uniformId,coarse=bucket.coarse;
+  if(iso&&!bucket.ids.has(iso)&&!bucket.ids.has(999999))return result;
+  if(only!==null&&((state.vegetation===false&&only>=800000&&only<900000)||(only>=950000&&only<960000&&!state.routeEdges?.has(only-950000))))return result;
+  // A finite, concentric single instance can use its exact scalar sphere once.
+  // Any displacement or ambiguous metadata retains the original two-stage path.
+  let singleInside=false;
+  if(bucket.singleSphere&&state.explode===0&&(scratch?scratch.data:bucket.visible)){
+   const y=sp[1]+(data[21]===state.selected?(state.explode||0)*data[23]:0);
+   if(!sphereVisible(planes,sp[0],y,sp[2],sp[3]))return result;
+   singleInside=true;
+  }else if(!sphereVisible(planes,coarse[0],coarse[1],coarse[2],coarse[3]+Math.abs(state.explode||0)*bucket.maxPart))return result;
+  const offset=appendToStream?scratch.used:0;
+  let out=scratch?scratch.data:bucket.visible;if(!out){out=new Float32Array(Math.min(64,bucket.count)*28);if(scratch)scratch.data=out;else bucket.visible=out;}let count=0,culled=0;
+  const enabled=state.detailLOD!==false,selected=state.selected,surface=bucket.surfaceWidths,flags=bucket.essentialFlags,groups=bucket.groups;
+  let inside=singleInside||smallInside(bucket,planes,state,out,insideEpoch);
+  const fast195=groups&&ownedScratch&&appendToStream&&wasmProof195(bucket,data,sp,groups,planes,eye,focal,state,out,insideEpoch,fastContext195);let fastMask195=false;
+  // A native one-record source needs the same scalar decisions, but no group
+  // traversal or accepted-run bookkeeping. Groups and source/output aliases
+  // retain the generic path, including its exact detached-buffer exceptions.
+  if(data.length===28&&!groups&&data.buffer!==out.buffer){
+   const i=0,j=0,k=0;
+   singleton:{
+   const id=data[i+21];if(iso&&id!==iso&&id!==999999)break singleton;
+   if((state.vegetation===false&&id>=800000&&id<900000)||(id>=950000&&id<960000&&!state.routeEdges?.has(id-950000)))break singleton;
+   const x=sp[j],y=sp[j+1]+(id===selected?(state.explode||0)*data[i+23]:0),z=sp[j+2],r=sp[j+3];
+   if(!inside&&!sphereVisible(planes,x,y,z,r))break singleton;
+   if(enabled){
+    const dx=x-eye[0],dy=y-eye[1],dz=z-eye[2],distanceSq=dx*dx+dy*dy+dz*dz,width=data[i+20]===38?sp[j+4]:(surface?surface[k]:0);
+    const surfaceLimit=width*focal/.85;
+    if(width&&Math.max(1,distanceSq)>surfaceLimit*surfaceLimit){culled++;break singleton;}
+    if(!iso&&id!==selected&&!flags[k]&&distanceSq>=260*260){const limit=sp[j+4]*focal/1.6;if(distanceSq>limit*limit){culled++;break singleton;}}
+   }
+   if(offset+(count+1)*28>out.length){
+    const length=appendToStream?Math.max(offset+(count+1)*28,Math.ceil(out.length*1.25)):Math.min(data.length,Math.max(28,out.length*2));let next;
+    // Engine consumes each prefix synchronously before reusing its own scratch.
+    if(ownedScratch&&scratch&&out.byteOffset===0&&out.byteLength===out.buffer.byteLength&&typeof out.buffer.transfer==='function')next=new Float32Array(out.buffer.transfer(length*4));
+    else{next=new Float32Array(length);next.set(out);}
+    out=next;if(scratch)scratch.data=next;else bucket.visible=next;
+   }
+    out.set(data,offset);count=1;
+   }
+   result.count=count;result.culled=culled;return result;
+  }
+  let runStart=-1,runEnd=0,runOutput=0;
+  for(let i=0,j=0,k=0;i<data.length;i+=28,j+=5,k++){
+   if(groups&&(k&63)===0){
+    fastMask195=false;
+    const q=(k>>6)*5,r=groups[q+3]+Math.abs(state.explode||0)*groups[q+4];let outside=false;inside=true;
+    for(const p of planes){const distance=p[0]*groups[q]+p[1]*groups[q+1]+p[2]*groups[q+2]+p[3];if(distance< -r){outside=true;break;}if(distance<r)inside=false;}
+    if(outside){i+=63*28;j+=63*5;k+=63;continue;}
+    // Conservative group bounds can prove every existing per-instance test
+    // would accept. Ambiguous detail thresholds and filtering use the scalar path.
+    if(inside&&!iso&&state.vegetation!==false&&bucket.groupDetail&&!bucket.groupRoutes[k>>6]){
+     const d=(k>>6)*4,distance=Math.hypot(groups[q]-eye[0],groups[q+1]-eye[1],groups[q+2]-eye[2]),far=distance+r,near=Math.max(0,distance-r);
+     if(enabled&&((near>=260&&!bucket.ids.has(selected)&&near>bucket.groupDetail[d+2]*focal/1.6)||Math.max(1,near)>bucket.groupDetail[d+3]*focal/.85)){
+      const rejected=Math.min(64,data.length/28-k);culled+=rejected;i+=(rejected-1)*28;j+=(rejected-1)*5;k+=rejected-1;continue;
+     }
+     if(!enabled||((far<260||far<bucket.groupDetail[d]*focal/1.6)&&Math.max(1,far)<bucket.groupDetail[d+1]*focal/.85)){
+      const accepted=Math.min(64,data.length/28-k),end=i+accepted*28,needed=offset+(count+accepted)*28;
+      if(needed>out.length){
+       const length=appendToStream?Math.max(needed,Math.ceil(out.length*1.25)):Math.min(data.length,Math.max(needed,out.length*2));let next;
+       if(ownedScratch&&scratch&&out.byteOffset===0&&out.byteLength===out.buffer.byteLength&&typeof out.buffer.transfer==='function')next=new Float32Array(out.buffer.transfer(length*4));
+       else{next=new Float32Array(length);next.set(out);}out=next;if(scratch)scratch.data=next;else bucket.visible=next;
+      }
+      if(runStart>=0){out.set(data.subarray(runStart,runEnd),offset+runOutput*28);runStart=-1;}
+      out.set(data.subarray(i,end),offset+count*28);count+=accepted;
+      i+=(accepted-1)*28;j+=(accepted-1)*5;k+=accepted-1;continue;
+     }
+    }
+    if(fast195){const skipped195=wasmGroup195(fast195,fastContext195,k,Math.min(64,data.length/28-k),inside,enabled);if(skipped195!==null){culled+=skipped195;fastMask195=true;}}
+   }
+   if(fastMask195){if(!(((k&63)<32?fast195.lo:fast195.hi)&(1<<(k&31))))continue;}else{
+   const id=data[i+21];if(iso&&id!==iso&&id!==999999)continue;
+   if((state.vegetation===false&&id>=800000&&id<900000)||(id>=950000&&id<960000&&!state.routeEdges?.has(id-950000)))continue;
+   const x=sp[j],y=sp[j+1]+(id===selected?(state.explode||0)*data[i+23]:0),z=sp[j+2],r=sp[j+3];
+   if(!inside&&!sphereVisible(planes,x,y,z,r))continue;
+   if(enabled){
+    const dx=x-eye[0],dy=y-eye[1],dz=z-eye[2],distanceSq=dx*dx+dy*dy+dz*dz,width=data[i+20]===38?sp[j+4]:(surface?surface[k]:0);
+    const surfaceLimit=width*focal/.85;
+    if(width&&Math.max(1,distanceSq)>surfaceLimit*surfaceLimit){culled++;continue;}
+    if(!iso&&id!==selected&&!flags[k]&&distanceSq>=260*260){const limit=sp[j+4]*focal/1.6;if(distanceSq>limit*limit){culled++;continue;}}
+   }
+   }
+   if(offset+(count+1)*28>out.length){
+    const length=appendToStream?Math.max(offset+(count+1)*28,Math.ceil(out.length*1.25)):Math.min(data.length,Math.max(28,out.length*2));let next;
+    // Engine consumes each prefix synchronously before reusing its own scratch.
+    if(ownedScratch&&scratch&&out.byteOffset===0&&out.byteLength===out.buffer.byteLength&&typeof out.buffer.transfer==='function')next=new Float32Array(out.buffer.transfer(length*4));
+    else{next=new Float32Array(length);next.set(out);}
+    out=next;if(scratch)scratch.data=next;else bucket.visible=next;
+   }
+   // Copy consecutive accepted records as one typed-array span. Visibility
+   // decisions and order stay unchanged; gaps end a span, never its neighbors.
+   if(runStart>=0&&runEnd!==i){out.set(data.subarray(runStart,runEnd),offset+runOutput*28);runStart=-1;}
+   if(runStart<0){runStart=i;runOutput=count;}
+   runEnd=i+28;count++;
+  }
+  if(runStart>=0)out.set(runStart===0&&runEnd===data.length?data:data.subarray(runStart,runEnd),offset+runOutput*28);
+  result.count=count;result.culled=culled;return result;
+ }
 
  // Immutable compiled-bucket snapshot. Rebuild after compilation or scene changes.
  // Nodes bound centers and radii separately: this preserves the selector's scalar
@@ -358,7 +550,7 @@ YY.MATERIAL_ATLAS="assets/materials-display.jpg";YY.TEXTURE_FALLBACK46="assets/r
   for(let word=0;word<bits.length;word++){let mask=bits[word];while(mask){const bit=31-Math.clz32(mask&-mask);ordered.push(index.entries[word*32+bit]);mask=(mask&(mask-1))>>>0;}}
   return ordered;
  }
- Y.Visibility={prepareSmallInside,buildBucketIndex,buildBucketIndexSteps,indexedBuckets,essentialMaterials:Object.freeze([...essential]),keepDetail,keepSurfaceDetail,prepare,bounds,sphereVisible,compile,prepareSingle,select};
+ Y.Visibility={preparePacked206:prepareWasm195,packedSelect195,wasmContext195,endWasmContext195,registerWasmEngine195,wasmStatus195,releaseWasm195,prepareSmallInside,buildBucketIndex,buildBucketIndexSteps,indexedBuckets,essentialMaterials:Object.freeze([...essential]),keepDetail,keepSurfaceDetail,prepare,bounds,sphereVisible,compile,prepareSingle,select};
 })(YY);
 
 ;
@@ -653,7 +845,8 @@ YY.SCAN1119_TEXTURE315={"width":1024,"height":512,"materialBase":48,"layers":[{"
 ;
 /* src/engine.js */
 /* Yanyuan WebGL2 renderer; original scene assets remain local. */
-(function(Y){'use strict';const M=Y.M;
+(function(Y){'use strict';const M=Y.M;const wasmFrustum195=M?.frustum,packedMapValues206=Map.prototype.values;
+ function packedIdleState206(engine){const state=Object.getOwnPropertyDescriptor(engine,'state')?.value;if(!state||(Object.getPrototypeOf(state)!==Object.prototype&&Object.getPrototypeOf(state)!==null))return false;const d=Object.getOwnPropertyDescriptor(state,'bucketSpatialIndex');return d?'value'in d&&d.value!==false:!('bucketSpatialIndex'in state);}
 const pickR5Reference=(()=>{const module={exports:{}};
 'use strict';
 // PRIVATE conditional arithmetic only. This module does not authorize a GL skip.
@@ -1427,6 +1620,7 @@ class Engine{
   if(this.disposed)return;this.disposed=true;this.releaseProgramStages();const g=this.gl;this.people?.dispose();this.people=null;
   for(const fence of this.frameFences||[])g.deleteSync(fence);this.frameFences=[];
   for(const b of this.buckets.values())for(const view of b.lodViews||[b])for(const p of view.passes?.values()||[])g.deleteVertexArray(p.vao);this.qualityHistory?.clear();this.qualityScratch=null;this.qualityLevels=null;
+  this.releaseInstancePool239?.();
   for(const stream of this.instanceStreams?.values()||[])g.deleteBuffer(stream.buffer);this.instanceStreams?.clear();
   if(this.staticInstanceBindings){g.deleteBuffer(this.staticInstanceBindings.buffer);this.staticInstanceBindings.entries.clear();this.staticInstanceBindings=null;}
   const deleted208=new Set();for(const m of this.meshResources||[])for(const buffer of[m.vertexBuffer,m.indexBuffer])if(buffer&&!deleted208.has(buffer)){g.deleteBuffer(buffer);deleted208.add(buffer);}this.pages208=[];this.pageIndexScratch208=null;
@@ -1457,6 +1651,7 @@ class Engine{
   if(withViewport){this.viewportWidth=w;this.viewportHeight=h;if(this.canvas.width!==w1)this.canvas.width=w1;if(this.canvas.height!==h1)this.canvas.height=h1;this.aspect=w1/h1;}
   if(changed){this.shadowDirty=true;this.lastReflection=-1;this.lastReflectKey=null;this.reflectionCullRect=null;this.reflectionFootprintPlanes=null;if(pending.reflectTarget)this.reflectionTargetGeneration=(this.reflectionTargetGeneration||0)+1;}
   for(const t of Object.values(old))this.disposeTarget(t);pickR5AfterFrame(this);
+  if(name==='low'||name==='medium')this.schedulePackedVisibility206();else if(this.packedWarmup206||this.packedWarmupReady206||this.packedWarmupFailed206)this.cancelPackedVisibility206();
  }
  resize(w,h){if(this.disposed)return;pickR5Invalidate(this,'resize');this.updateQualityTargets(this.qualityPreset||'high',w,h,true);}
  add(key,geometry,matrix,color,meta=[0,0,0,0],uv=[0,0,1,1]){this.invalidateBucketIndex();let b=this.buckets.get(key);if(!b){b={geometry:{v:new Float32Array(geometry.v)},detailWidth:geometry.detailWidth||0,qualityRole:geometry.qualityRole||null,qualityMetric:geometry.qualityMetric||0,qualityLods:geometry.qualityLods,instances:[]};this.buckets.set(key,b)}if(typeof color==='string')color=M.color(color);b.instances.push(...matrix,...color.slice(0,3),1,...meta,...uv);this.stats.instances++}
@@ -1511,6 +1706,8 @@ class Engine{
  instanceStream(pass,initialData=null){
   this.instanceStreams ||= new Map();let stream=this.instanceStreams.get(pass);
   if(!stream){stream={buffer:this.gl.createBuffer(),data:initialData||new Float32Array(65536),used:0,capacity:0};this.instanceStreams.set(pass,stream);}
+  if(stream.baseBuffer239===undefined)stream.baseBuffer239=stream.buffer;
+  stream.buffer=stream.baseBuffer239;stream.poolEntry239=null;stream.poolPrepared239=false;stream.poolPass239=pass;
   stream.used=0;return stream;
  }
  instanceCache(bucket,pass,count,stream,visible=bucket.visible,deferVAO=false){
@@ -1578,11 +1775,102 @@ class Engine{
   c.offset=offset;
   return c;
  }
+ // Lower-tier storage reuse has its own pass fences. It does not admit frames.
+ // Keep at most two extra stores per pass, within one 64 MiB engine budget.
+ prepareInstancePool239(stream,pass,state=this.state){
+  const g=this.gl,lower=this.qualityPreset==='medium'||this.qualityPreset==='low',bytes=stream.used*4;
+  if(!['fenceInstancePool239','recordInstancePoolPlan239','restoreInstanceBase239','releaseInstancePool239'].every(k=>typeof this[k]==='function'))return;
+  if(!lower||this.disposed||state?.deferredInstanceVAO===false||![0,2,3].includes(pass)||this.instanceStreams?.get(pass)!==stream||!stream.baseBuffer239||!Number.isSafeInteger(bytes)||bytes<=0||bytes>32*1024*1024||stream.used>stream.data.length)return;
+  if(!['createBuffer','bufferData','getBufferParameter','fenceSync','clientWaitSync','deleteSync'].every(k=>typeof g[k]==='function')||![g.ALREADY_SIGNALED,g.CONDITION_SATISFIED,g.TIMEOUT_EXPIRED,g.WAIT_FAILED].every(Number.isInteger)||g.isContextLost?.())return;
+  const owner=this.instancePool239||(this.instancePool239={passes:new Map(),plans:new WeakMap(),reservedBytes:0,allocations:0,reuseUploads:0,busyFallbacks:0,budgetFallbacks:0,allocationFailures:0,fenceFailures:0,externalFallbacks:0});
+  let pool=owner.passes.get(pass);if(!pool){pool={entries:[]};owner.passes.set(pass,pool);}
+  let entry=null;
+  for(const item of pool.entries){
+   if(item.failed)continue;
+   if(item.fence){
+    let status;try{status=g.clientWaitSync(item.fence,0,0);}catch{status=g.WAIT_FAILED;}
+    if(status===g.TIMEOUT_EXPIRED)continue;
+    if(status!==g.ALREADY_SIGNALED&&status!==g.CONDITION_SATISFIED){item.failed=true;owner.fenceFailures++;continue;}
+    g.deleteSync(item.fence);item.fence=null;
+   }
+   entry=item;break;
+  }
+  if(!entry&&pool.entries.length<2){
+   if(owner.reservedBytes+bytes>64*1024*1024){owner.budgetFallbacks++;return;}
+   const buffer=g.createBuffer();if(!buffer){owner.allocationFailures++;return;}
+   entry={buffer,capacity:0,fence:null,retiredFence:null,failed:false};pool.entries.push(entry);
+  }
+  if(!entry){owner.busyFallbacks++;return;}
+  if(entry.capacity<bytes){
+   const available=64*1024*1024-owner.reservedBytes+entry.capacity;
+   if(bytes>available){owner.budgetFallbacks++;return;}
+   const capacity=Math.min(available,Math.ceil(bytes*1.25/16)*16);
+   owner.reservedBytes+=capacity-entry.capacity;entry.capacity=capacity;owner.allocations++;
+   try{
+    g.bindBuffer(g.ARRAY_BUFFER,entry.buffer);g.bufferData(g.ARRAY_BUFFER,capacity,g.DYNAMIC_DRAW);
+    // Do not consume an unrelated error flag. A failed optional allocation keeps
+    // its reservation and retires this store, then uses the original base path.
+    if(g.getBufferParameter(g.ARRAY_BUFFER,g.BUFFER_SIZE)!==capacity)throw Error('Optional instance store allocation');
+   }catch{entry.failed=true;owner.allocationFailures++;return;}
+  }
+  stream.buffer=entry.buffer;stream.poolEntry239=entry;stream.poolPrepared239=true;
+ }
+ restoreInstanceBase239(stream){
+  const previous=stream.buffer,base=stream.baseBuffer239,g=this.gl;
+  if(!base||previous===base){stream.poolEntry239=null;stream.poolPrepared239=false;return;}
+  // Direct external uploads bypass deferred preparation. Rebind any cached
+  // dynamic heads to their original base before applying the legacy upload.
+  for(const b of this.buckets?.values()||[])for(const view of b.lodViews||[b]){
+   const record=view.passes?.get(stream.poolPass239);
+   if(!record||record.instanceBuffer!==previous)continue;
+   g.bindVertexArray(record.vao);g.bindBuffer(g.ARRAY_BUFFER,base);
+   for(let a=3;a<=9;a++)g.vertexAttribPointer(a,4,g.FLOAT,false,112,record.offset*4+(a-3)*16);
+   record.instanceBuffer=base;record.instanceOffset=record.offset;
+  }
+  stream.buffer=base;stream.poolEntry239=null;stream.poolPrepared239=false;
+  if(this.instancePool239)this.instancePool239.externalFallbacks++;
+ }
+ recordInstancePoolPlan239(cached,stream){
+ if(stream.poolEntry239&&!stream.poolEntry239.failed&&this.instancePool239)this.instancePool239.plans.set(cached,stream.poolEntry239);
+}
+fenceInstancePool239(pass,cached=null){
+  if(this.qualityPreset!=='medium'&&this.qualityPreset!=='low')return;
+  const entry=cached?this.instancePool239?.plans.get(cached):this.instanceStreams?.get(pass===1?0:pass)?.poolEntry239;
+  if(!entry||entry.failed)return;
+  const g=this.gl,previous=entry.fence;
+  try{
+   const next=g.fenceSync(g.SYNC_GPU_COMMANDS_COMPLETE,0);
+   if(!next)throw Error('Optional instance fence unavailable');
+   entry.fence=next;if(previous)g.deleteSync(previous);
+  }catch{entry.failed=true;if(previous&&previous!==entry.fence)entry.retiredFence=previous;this.instancePool239.fenceFailures++;}
+ }
+ releaseInstancePool239(){
+  const owner=this.instancePool239;if(!owner)return;
+  const g=this.gl;
+  for(const pool of owner.passes.values())for(const entry of pool.entries){
+   for(const fence of new Set([entry.fence,entry.retiredFence]))if(fence)g.deleteSync(fence);
+   g.deleteBuffer(entry.buffer);
+  }
+  for(const stream of this.instanceStreams?.values()||[]){if(stream.baseBuffer239!==undefined)stream.buffer=stream.baseBuffer239;stream.poolEntry239=null;stream.poolPrepared239=false;}
+  owner.passes.clear();owner.plans=null;this.instancePool239=null;
+ }
+ instancePoolStatus239(){
+  const owner=this.instancePool239,entries=[...(owner?.passes.values()||[])].flatMap(p=>p.entries);
+  return{reservedBytes:owner?.reservedBytes||0,buffers:entries.length,fences:entries.reduce((n,e)=>n+!!e.fence+!!e.retiredFence,0),
+   allocations:owner?.allocations||0,reuseUploads:owner?.reuseUploads||0,busyFallbacks:owner?.busyFallbacks||0,budgetFallbacks:owner?.budgetFallbacks||0,
+   allocationFailures:owner?.allocationFailures||0,fenceFailures:owner?.fenceFailures||0,externalFallbacks:owner?.externalFallbacks||0};
+ }
  uploadInstances(stream){
   // Clear stale CPU aliases even when this visibility rebuild has no eligible
   // singleton. Fallback browsers may grow streams without buffer.transfer().
   if(stream.staticInstanceBindingWords&&stream.staticInstanceBindingWords.buffer!==stream.data.buffer)stream.staticInstanceBindingWords=null;
-  if(!stream.used)return;const g=this.gl,bytes=stream.used*4;g.bindBuffer(g.ARRAY_BUFFER,stream.buffer);
+  if(!stream.used)return;const g=this.gl,bytes=stream.used*4,entry=stream.poolEntry239;
+  if(entry&&stream.poolPrepared239&&!entry.failed&&(this.qualityPreset==='medium'||this.qualityPreset==='low')&&bytes<=entry.capacity){
+   stream.poolPrepared239=false;stream.capacity=Math.max(stream.capacity,bytes);g.bindBuffer(g.ARRAY_BUFFER,stream.buffer);
+   g.bufferSubData(g.ARRAY_BUFFER,0,stream.data,0,stream.used);this.stats.instanceUploadBytes+=bytes;this.instancePool239.reuseUploads++;return;
+  }
+  if(entry)this.restoreInstanceBase239(stream);
+  g.bindBuffer(g.ARRAY_BUFFER,stream.buffer);
   stream.capacity=Math.max(stream.capacity,bytes);g.bufferData(g.ARRAY_BUFFER,stream.capacity,g.DYNAMIC_DRAW);
   g.bufferSubData(g.ARRAY_BUFFER,0,stream.data,0,stream.used);this.stats.instanceUploadBytes+=bytes;
  }
@@ -1738,22 +2026,55 @@ class Engine{
  }
  // Only this engine's compiled-scene epoch may use indexed traversal. Any
  // supported geometry or Map membership/order edit must invalidate it first.
- invalidateBucketIndex(){pickR5Publication(this,'scene-mutation');
+ invalidateBucketIndex(){pickR5Publication(this,'scene-mutation');this.cancelPackedVisibility206?.();
   // CPU-only collectors also borrow this invalidation method.
   this.cancelInitialVisibility?.(true);
   this.bucketIndex=null;this.bucketIndexGeneration=(this.bucketIndexGeneration||0)+1;this.bucketIndexEpoch=null;
   if(this.bucketIndexIdle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(this.bucketIndexIdle);
   this.bucketIndexIdle=undefined;this.bucketIndexJob=null;
  }
+ // Private lower-tier metadata preparation. Original scene/index/GL work is unchanged.
+ cancelPackedVisibility206(){
+  const job=this.packedWarmup206,ready=this.packedWarmupReady206,failed=this.packedWarmupFailed206;
+  if(!job&&!ready&&!failed)return;
+  this.packedWarmup206=null;this.packedWarmupReady206=null;this.packedWarmupFailed206=null;
+  if(job?.idle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(job.idle);
+  job?.steps?.return();job?.entries?.return?.();
+  Y.Visibility.releaseWasm195(job?.epoch||ready||failed);
+ }
+ schedulePackedVisibility206(){
+  if(this.disposed||!['low','medium'].includes(this.qualityPreset)||!packedIdleState206(this)||!this.bucketIndex||!this.bucketIndexEpoch||typeof requestIdleCallback!=='function')return;
+  const visibility=Y.Visibility;
+  if(typeof visibility?.preparePacked206!=='function'||typeof visibility.releaseWasm195!=='function')return;
+  const epoch=this.bucketIndexEpoch,index=this.bucketIndex,buckets=this.buckets;
+  if(this.packedWarmup206||this.packedWarmupReady206===epoch||this.packedWarmupFailed206===epoch)return;
+  if(!(buckets instanceof Map)||Object.getPrototypeOf(buckets)!==Map.prototype||Object.hasOwn(buckets,'values')||Map.prototype.values!==packedMapValues206)return;
+  const job={epoch,index,buckets,entries:packedMapValues206.call(buckets),steps:null,idle:undefined};this.packedWarmup206=job;
+  const tick=deadline=>{
+   if(this.packedWarmup206!==job)return;
+   job.idle=undefined;
+   if(this.disposed||!['low','medium'].includes(this.qualityPreset)||!packedIdleState206(this)||this.bucketIndexEpoch!==epoch||this.bucketIndex!==index||this.buckets!==buckets){this.cancelPackedVisibility206();return;}
+   const end=performance.now()+2;
+   try{
+    while(deadline.timeRemaining()>.5&&performance.now()<end){
+     if(!job.steps){const next=job.entries.next();if(next.done){this.packedWarmup206=null;this.packedWarmupReady206=epoch;return;}job.steps=Y.Visibility.preparePacked206(next.value,epoch);}
+     if(job.steps.next().done)job.steps=null;
+    }
+    job.idle=requestIdleCallback(tick);
+   }catch(error){this.cancelPackedVisibility206();this.packedWarmupFailed206=epoch;}
+  };
+  job.idle=requestIdleCallback(tick);
+ }
  scheduleBucketIndex(){
   // No timer fallback: first frames and busy browsers retain original traversal.
   if(this.bucketIndex||this.bucketIndexJob||typeof requestIdleCallback!=='function')return;
+  this.cancelPackedVisibility206?.();
   const epoch=this.bucketIndexEpoch=Object.freeze({generation:this.bucketIndexGeneration||0}),buckets=this.buckets,job=this.bucketIndexJob=Y.Visibility.buildBucketIndexSteps(buckets,epoch);
   const tick=deadline=>{
    this.bucketIndexIdle=undefined;
    if(this.disposed||this.bucketIndexEpoch!==epoch||this.buckets!==buckets||this.state.bucketSpatialIndex===false){if(this.bucketIndexJob===job)this.bucketIndexJob=null;return;}
    const end=performance.now()+2;
-   while(deadline.timeRemaining()>.5&&performance.now()<end){const step=job.next();if(step.done){this.bucketIndex=step.value;this.bucketIndexJob=null;this.cancelInitialVisibility(true);for(const[slot,cache]of this.visibilityCaches)if(cache.generation!==epoch.generation)this.visibilityCaches.delete(slot);return;}}
+   while(deadline.timeRemaining()>.5&&performance.now()<end){const step=job.next();if(step.done){this.bucketIndex=step.value;this.bucketIndexJob=null;if(this.qualityPreset==='low'||this.qualityPreset==='medium')this.schedulePackedVisibility206();this.cancelInitialVisibility(true);for(const[slot,cache]of this.visibilityCaches)if(cache.generation!==epoch.generation)this.visibilityCaches.delete(slot);return;}}
    this.bucketIndexIdle=requestIdleCallback(tick);
   };
   this.bucketIndexIdle=requestIdleCallback(tick);
@@ -1772,10 +2093,11 @@ class Engine{
  }
  *buildVisiblePlan(context,stream,cooperative=false){
   const{vp,slot,state,hidden,lodEye,focal,waterLevel,reflection}=context,planes=slot===3?[...this.reflectionPlanes(vp,reflection.scissor,state,reflection.target),...(reflection.footprintPlanes||[])]:M.frustum(vp),items=[],clear=[],selectionResult={count:0,culled:0};let submitted=0,triangles=0,culled=0;
-   let batch=0;
+   const fastContext195=!cooperative&&(this.qualityPreset==='low'||this.qualityPreset==='medium')&&M.frustum===wasmFrustum195?Y.Visibility.wasmContext195?.(planes,lodEye,focal,state,stream,this.bucketIndexEpoch,this):null;
+   let batch=0;try{
    for(const[name,b]of (state.bucketSpatialIndex===false?this.buckets:Y.Visibility.indexedBuckets(this.bucketIndex,this.buckets,planes,state,this.bucketIndexEpoch))){
     if(cooperative&&++batch%16===0)yield;
-    if(hidden?.has(name)||(slot===2&&(b.uniformMaterial===4||b.uniformMaterial===8||b.uniformMaterial===44||b.uniformMaterial===47))||(slot===3&&b.uniformMaterial===4))continue;const result=Y.Visibility.select(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch);culled+=result.culled;if(!result.count)continue;
+    if(hidden?.has(name)||(slot===2&&(b.uniformMaterial===4||b.uniformMaterial===8||b.uniformMaterial===44||b.uniformMaterial===47))||(slot===3&&b.uniformMaterial===4))continue;const result=(fastContext195?Y.Visibility.packedSelect195(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch,fastContext195):Y.Visibility.select(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch));culled+=result.culled;if(!result.count)continue;
     if(this.qualityPreset!=='high'&&b.lodViews){
      const parts=Y.QualityLOD.partition(this,b,context,stream,result.count);
      for(const part of parts){const record=this.instanceCache(part.b,slot,part.count,stream,null,state.deferredInstanceVAO!==false);items.push({b:part.b,record,ranges:null});submitted+=part.count;triangles+=part.b.vertexCount/3*part.count;}
@@ -1793,6 +2115,7 @@ class Engine{
    const clearStart=items.length;clear.sort((a,b)=>b.depth-a.depth);items.push(...clear);
    const grouped=this.groupDraws(items,clearStart);
   return{items,clearStart,...grouped,submitted,triangles:Math.round(triangles),culled,hasWater:items.some(({b})=>b.materials.has(4)),water:items.filter(({b})=>b.uniformMaterial===4&&b.count===1).map(({b})=>b),stream};
+  }finally{if(fastContext195)Y.Visibility.endWasmContext195(fastContext195);}
  }
  cancelInitialVisibility(clearPlans=false){
   if(this.initialVisibilityIdle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(this.initialVisibilityIdle);
@@ -1898,8 +2221,9 @@ class Engine{
    const{stream:cpuStream,...records}=plan;
    // Only emitted draw heads need VAOs; retain every logical stream segment.
    // Materialize before upload, matching the original GL update ordering.
+   this.prepareInstancePool239?.(stream,slot,state);
    if(state.deferredInstanceVAO!==false)for(const item of records.drawItems)item.record.vao=this.instanceVAO(item.b,slot,stream,item.record.offset,item.record.count).vao;
-   this.uploadInstances(stream);cached={key,generation:this.bucketIndexGeneration||0,...records};this.visibilityCaches.set(slot,cached);this.stats.visibilityBuilds++;
+   this.uploadInstances(stream);cached={key,generation:this.bucketIndexGeneration||0,...records};this.recordInstancePoolPlan239?.(cached,stream);this.visibilityCaches.set(slot,cached);this.stats.visibilityBuilds++;
   }
   return cached;
  }
@@ -1946,7 +2270,7 @@ class Engine{
    else if(ranges){for(const[first,count]of ranges){if(pass===1&&pickR5ShouldSkip(this,p,vp,cached,b,record,ranges,first,count))continue;if(b.resource.indexBuffer)g.drawElementsInstanced(g.TRIANGLES,count,b.resource.indexType==='uint16'?g.UNSIGNED_SHORT:g.UNSIGNED_INT,first*(b.resource.indexType==='uint16'?2:4),record.count);else g.drawArraysInstanced(g.TRIANGLES,first,count,record.count);calls++;}}
    else{if(b.resource.indexBuffer)g.drawElementsInstanced(g.TRIANGLES,b.vertexCount,b.resource.indexType==='uint16'?g.UNSIGNED_SHORT:g.UNSIGNED_INT,b.resource.indexByteOffset208||0,record.count);else g.drawArraysInstanced(g.TRIANGLES,0,b.vertexCount,record.count);calls++;}
   }if(cached.drawClearStart===cached.drawItems.length&&(pass===0||pass===3)){this.people?.draw(vp,eye,pass);if(this.state.skyAfterOpaque!==false)this.sky(vp,eye,true);textureState=[];}
-  }finally{if(blending){g.depthMask(true);g.disable(g.BLEND);}g.bindVertexArray(null);}
+  }finally{if(blending){g.depthMask(true);g.disable(g.BLEND);}g.bindVertexArray(null);this.fenceInstancePool239?.(pass,cached);}
   if(pass===0){const people=this.people?.active&&this.people.mask?this.people.metrics:null;Object.assign(this.stats,{drawnInstances:cached.submitted-skipped45Instances+(people?.instances||0),drawnTriangles:cached.triangles-skipped45Triangles+(people?.triangles||0),detailCulled:cached.culled,drawCalls:calls+(people?.mainCalls||0)+(people?.shadowCalls||0),people});}
  }
 
@@ -2128,6 +2452,9 @@ P.mergePage208=function(a,b){const ma=a.b.resource,mb=b.b.resource,p=ma.page208;
   return value;
  };
 })(YY);
+
+/* Private D195 original-method ownership registration. */
+YY.Visibility?.registerWasmEngine195?.(YY.Engine.prototype);
 
 ;
 /* src/models.js */
@@ -39987,7 +40314,7 @@ async function init(recover=false){finishPanelOffset();
   const scene=await loadRenderResources(next,(n,total)=>{if(generation===renderGeneration)$('status').textContent=(recover?'正在恢复校园… ':'正在打开校园… ')+Math.round(n/total*100)+'%';},prepared);
   if(generation!==renderGeneration){next.dispose();return;}
   campus=scene;next.people=Y.Pedestrians46.create(next,campus,state);$('show-people').disabled=false;$('walkers-view').disabled=false;$('quality-preset').disabled=false;ready=true;lastVisualKey='';lastInput=null;last=lastDraw=0;root.dataset.ready='true';$('coverage').textContent=`${D.features.filter(f=>f.properties.kind==='building'&&!f.properties.supersededBy43).length} 个建筑对象`;$('status').textContent='';
-  window.Yanyuan={version:'1.5.2',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
+  window.Yanyuan={version:'1.5.3',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
   if(!recover&&developmentReferences){const script=document.createElement('script');script.src='private/reference-gallery.js';script.onload=()=>{if(selected)renderReferenceGallery(by.get(selected).properties);};document.head.appendChild(script);}
    cancelAnimationFrame(frameRequest);frameRequest=requestAnimationFrame(tick);
  }catch(e){next?.dispose();if(generation!==renderGeneration)return;$('quality-preset').disabled=true;console.error(e);$('status').textContent='三维暂不可用，已切换平面地图。';changeMode('plan');ready=true;root.dataset.ready='plan-only';}finally{prepared?.dispose();}
