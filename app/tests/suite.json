@@ -80,7 +80,8 @@
     "browse-camera-input.test.cjs",
     "quality-preference.test.cjs",
     "engine-quality.test.cjs",
-    "quality-lod.test.cjs"
+    "quality-lod.test.cjs",
+    "pool239.test.cjs"
   ],
   "packagingTests": [
     "runtime-scene-package284.test.py",

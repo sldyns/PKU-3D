@@ -1,5 +1,30 @@
 # Rendering performance
 
+## 1.5.3 response-focused update
+
+Medium and Low can reuse at most two optional instance-buffer stores per main, shadow and reflection pass, with at most six stores and a shared 64 MiB GPU reservation budget. Each store has explicit reader/fence ownership. Busy, unsupported or failed allocations use the original base buffer; the frame-admission queue remains bounded to two. Complete instance bits, draw order, source images and rendering settings are unchanged. High uses its original upload and selection paths.
+
+Lower-tier visibility preparation uses a separate 16 MiB CPU arena, built cooperatively during idle callbacks. Stored Float32 values are widened for the original Float64 arithmetic; dimensions, ordering and fallback decisions retain their original semantics. High does not prepare an arena. Unsupported states and incomplete preparation use the original scalar selector, and invalidation, disposal and context recovery retire owned work.
+
+The retained complete native-input comparison with unchanged 1.5.2 contains 192 qualified originals in four alternating paired blocks. Medium/Low event-to-render-return P95 had a conservative paired ratio of 0.8694755687, about 13.05% lower. Render-wall median had a ratio of 1.0002454254, effectively unchanged. All 24 input-cell regression checks passed, including the High controls. The original combined acceptance verdict remains negative because it also required at least five percent lower rendering time. This release targets the demonstrated response improvement; it does not retroactively pass that rendering target, measure input-to-photon latency or establish stable interactive 60 FPS.
+
+The same candidate's retained DPR2 qualification includes 141 complete RGBA and 141 HDR rasters, 75 High captures and nine actual context recoveries. Fresh controlled-Chrome checks independently verified 12 exact before/candidate RGBA and HDR pairs across all three qualities, desktop and narrow views, isolation and night lighting. Six actual context recoveries, preset persistence, owned-buffer disposal and local-file loading also passed. These finite fixtures do not certify every campus view or physical phone.
+
+A fresh comparison with the unchanged 1.5.2 build completed all 12 startup/motion stages and passed the six original recheck lines:
+
+| Metric | Candidate/reference ratio | Original result |
+| --- | ---: | --- |
+| First-frame submission time | 0.96818 | Pass |
+| First-frame GPU-ready time | 0.94729 | Pass |
+| Reported JavaScript heap | 0.99408 | Pass |
+| Campus animation submission rate | 0.99721 | Pass |
+| Lake orbit submission rate | 1.01093 | Pass |
+| Lake main-thread median time | 0.95489 | Pass |
+
+These controlled samples retain their original viewport, profiling and threshold scope; submission rate is not physical presentation FPS. The separate older-scene historical comparison could not complete within the available resource boundary. No new pass against that older scene is claimed, and its original assets, thresholds and prior results remain unchanged.
+
+Two additional lower-tier LOD variants passed semantic tests and lossless captured-state replay, but their fresh 32-case application screens did not establish a consistent improvement without tail regressions. They are excluded. Their component timing reductions must not be added to the retained response result above.
+
 ## 1.5.2 maintenance release
 
 This release updates project status, maintenance guidance and versioned packaging. Rendering behavior and scene content remain those of 1.5.1; only the runtime version identifier changes. It introduces no accepted performance optimization. The retained 1.5.1 results below describe their original build and run, not a new benchmark of 1.5.2.

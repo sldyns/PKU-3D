@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.3
+
+- Reuse bounded, independently fenced instance-buffer stores in Medium/Low, with the original upload path as fallback. Keep the two-frame admission queue and complete ordered instance payloads.
+- Prepare exact lower-tier visibility data during idle time in a bounded arena; use the original scalar path for High and unsupported states. Preserve model detail, source images, shadows, reflection settings and antialiasing.
+- Retain the matched 192-case input evidence: Medium/Low response P95 was about 13% lower, render-wall time was similar, and all 24 input regression cells passed. This does not pass the study's separate five-percent rendering-gain target or establish stable 60 FPS.
+- Keep the additional LOD arithmetic and contiguous-copy candidates experimental after fresh application screens did not establish a consistent gain without tail regressions.
+- Avoid checking out the previous generated site during publication and share copied assets where the filesystem supports it.
+
 ## 1.5.2
 
 - Refresh the English and Chinese project status, performance documentation and release guidance after reviewing the subsequent rendering experiments.

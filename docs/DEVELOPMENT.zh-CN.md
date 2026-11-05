@@ -103,6 +103,8 @@ npm run dev
 
 运行 `npm run deploy` 构建网页并推送到 `gh-pages`，GitHub Pages 会从该分支发布到 `https://sldyns.github.io/PKU-3D/`。`main` 保存可编辑源码，`gh-pages` 只保存生成的网站。发布需要该仓库的 Git 推送权限。
 
+发布脚本不会检出旧网站文件；文件系统支持时以写时复制共享生成资源，否则使用普通复制。脚本仍会暂存完整生成目录，因此本次构建移除的文件也会从发布分支移除。
+
 ## 本地外观参考
 
 开发照片、视频和研究记录不进入 Git 或发布包。已有这些文件的维护工作区可运行 `npm run dev:references`，在本地地址加上 `?dev=1` 显示建筑外观参考。GitHub Pages 不会开启此模式。

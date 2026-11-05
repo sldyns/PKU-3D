@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Build the website and publish its generated files to the Pages branch."""
 from pathlib import Path
+import ctypes
+import os
 import shutil
 import subprocess
+import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,12 +20,21 @@ def read(*args):
     return subprocess.check_output(args, cwd=ROOT, text=True).strip()
 
 
+def copy_artifact(source, destination):
+    """Share unchanged bytes where supported; keep the portable copy fallback."""
+    if sys.platform == 'darwin':
+        library = ctypes.CDLL(None, use_errno=True)
+        if library.clonefile(os.fsencode(source), os.fsencode(destination), 0) == 0:
+            return destination
+    return shutil.copy2(source, destination)
+
+
 def publish():
     run('python3', 'app/build.py', '--cached')
     revision = read('git', 'rev-parse', '--short', 'HEAD')
     with tempfile.TemporaryDirectory(prefix='pku-3d-pages-') as folder:
         destination = Path(folder) / 'site'
-        run('git', 'clone', '--depth', '1', '--single-branch', '--branch', 'gh-pages', REPOSITORY, str(destination))
+        run('git', 'clone', '--depth', '1', '--single-branch', '--branch', 'gh-pages', '--no-checkout', REPOSITORY, str(destination))
         for item in destination.iterdir():
             if item.name == '.git':
                 continue
@@ -32,9 +44,9 @@ def publish():
                 item.unlink()
         for item in (ROOT / 'dist').iterdir():
             if item.is_dir():
-                shutil.copytree(item, destination / item.name)
+                shutil.copytree(item, destination / item.name, copy_function=copy_artifact)
             else:
-                shutil.copy2(item, destination / item.name)
+                copy_artifact(item, destination / item.name)
         run('git', 'add', '--all', cwd=destination)
         result = subprocess.run(['git', 'diff', '--cached', '--quiet'], cwd=destination)
         if result.returncode == 0:

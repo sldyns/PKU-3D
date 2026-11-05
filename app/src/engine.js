@@ -1,5 +1,6 @@
 /* Yanyuan WebGL2 renderer; original scene assets remain local. */
-(function(Y){'use strict';const M=Y.M;
+(function(Y){'use strict';const M=Y.M;const wasmFrustum195=M?.frustum,packedMapValues206=Map.prototype.values;
+ function packedIdleState206(engine){const state=Object.getOwnPropertyDescriptor(engine,'state')?.value;if(!state||(Object.getPrototypeOf(state)!==Object.prototype&&Object.getPrototypeOf(state)!==null))return false;const d=Object.getOwnPropertyDescriptor(state,'bucketSpatialIndex');return d?'value'in d&&d.value!==false:!('bucketSpatialIndex'in state);}
 const pickR5Reference=(()=>{const module={exports:{}};
 'use strict';
 // PRIVATE conditional arithmetic only. This module does not authorize a GL skip.
@@ -773,6 +774,7 @@ class Engine{
   if(this.disposed)return;this.disposed=true;this.releaseProgramStages();const g=this.gl;this.people?.dispose();this.people=null;
   for(const fence of this.frameFences||[])g.deleteSync(fence);this.frameFences=[];
   for(const b of this.buckets.values())for(const view of b.lodViews||[b])for(const p of view.passes?.values()||[])g.deleteVertexArray(p.vao);this.qualityHistory?.clear();this.qualityScratch=null;this.qualityLevels=null;
+  this.releaseInstancePool239?.();
   for(const stream of this.instanceStreams?.values()||[])g.deleteBuffer(stream.buffer);this.instanceStreams?.clear();
   if(this.staticInstanceBindings){g.deleteBuffer(this.staticInstanceBindings.buffer);this.staticInstanceBindings.entries.clear();this.staticInstanceBindings=null;}
   const deleted208=new Set();for(const m of this.meshResources||[])for(const buffer of[m.vertexBuffer,m.indexBuffer])if(buffer&&!deleted208.has(buffer)){g.deleteBuffer(buffer);deleted208.add(buffer);}this.pages208=[];this.pageIndexScratch208=null;
@@ -803,6 +805,7 @@ class Engine{
   if(withViewport){this.viewportWidth=w;this.viewportHeight=h;if(this.canvas.width!==w1)this.canvas.width=w1;if(this.canvas.height!==h1)this.canvas.height=h1;this.aspect=w1/h1;}
   if(changed){this.shadowDirty=true;this.lastReflection=-1;this.lastReflectKey=null;this.reflectionCullRect=null;this.reflectionFootprintPlanes=null;if(pending.reflectTarget)this.reflectionTargetGeneration=(this.reflectionTargetGeneration||0)+1;}
   for(const t of Object.values(old))this.disposeTarget(t);pickR5AfterFrame(this);
+  if(name==='low'||name==='medium')this.schedulePackedVisibility206();else if(this.packedWarmup206||this.packedWarmupReady206||this.packedWarmupFailed206)this.cancelPackedVisibility206();
  }
  resize(w,h){if(this.disposed)return;pickR5Invalidate(this,'resize');this.updateQualityTargets(this.qualityPreset||'high',w,h,true);}
  add(key,geometry,matrix,color,meta=[0,0,0,0],uv=[0,0,1,1]){this.invalidateBucketIndex();let b=this.buckets.get(key);if(!b){b={geometry:{v:new Float32Array(geometry.v)},detailWidth:geometry.detailWidth||0,qualityRole:geometry.qualityRole||null,qualityMetric:geometry.qualityMetric||0,qualityLods:geometry.qualityLods,instances:[]};this.buckets.set(key,b)}if(typeof color==='string')color=M.color(color);b.instances.push(...matrix,...color.slice(0,3),1,...meta,...uv);this.stats.instances++}
@@ -857,6 +860,8 @@ class Engine{
  instanceStream(pass,initialData=null){
   this.instanceStreams ||= new Map();let stream=this.instanceStreams.get(pass);
   if(!stream){stream={buffer:this.gl.createBuffer(),data:initialData||new Float32Array(65536),used:0,capacity:0};this.instanceStreams.set(pass,stream);}
+  if(stream.baseBuffer239===undefined)stream.baseBuffer239=stream.buffer;
+  stream.buffer=stream.baseBuffer239;stream.poolEntry239=null;stream.poolPrepared239=false;stream.poolPass239=pass;
   stream.used=0;return stream;
  }
  instanceCache(bucket,pass,count,stream,visible=bucket.visible,deferVAO=false){
@@ -924,11 +929,102 @@ class Engine{
   c.offset=offset;
   return c;
  }
+ // Lower-tier storage reuse has its own pass fences. It does not admit frames.
+ // Keep at most two extra stores per pass, within one 64 MiB engine budget.
+ prepareInstancePool239(stream,pass,state=this.state){
+  const g=this.gl,lower=this.qualityPreset==='medium'||this.qualityPreset==='low',bytes=stream.used*4;
+  if(!['fenceInstancePool239','recordInstancePoolPlan239','restoreInstanceBase239','releaseInstancePool239'].every(k=>typeof this[k]==='function'))return;
+  if(!lower||this.disposed||state?.deferredInstanceVAO===false||![0,2,3].includes(pass)||this.instanceStreams?.get(pass)!==stream||!stream.baseBuffer239||!Number.isSafeInteger(bytes)||bytes<=0||bytes>32*1024*1024||stream.used>stream.data.length)return;
+  if(!['createBuffer','bufferData','getBufferParameter','fenceSync','clientWaitSync','deleteSync'].every(k=>typeof g[k]==='function')||![g.ALREADY_SIGNALED,g.CONDITION_SATISFIED,g.TIMEOUT_EXPIRED,g.WAIT_FAILED].every(Number.isInteger)||g.isContextLost?.())return;
+  const owner=this.instancePool239||(this.instancePool239={passes:new Map(),plans:new WeakMap(),reservedBytes:0,allocations:0,reuseUploads:0,busyFallbacks:0,budgetFallbacks:0,allocationFailures:0,fenceFailures:0,externalFallbacks:0});
+  let pool=owner.passes.get(pass);if(!pool){pool={entries:[]};owner.passes.set(pass,pool);}
+  let entry=null;
+  for(const item of pool.entries){
+   if(item.failed)continue;
+   if(item.fence){
+    let status;try{status=g.clientWaitSync(item.fence,0,0);}catch{status=g.WAIT_FAILED;}
+    if(status===g.TIMEOUT_EXPIRED)continue;
+    if(status!==g.ALREADY_SIGNALED&&status!==g.CONDITION_SATISFIED){item.failed=true;owner.fenceFailures++;continue;}
+    g.deleteSync(item.fence);item.fence=null;
+   }
+   entry=item;break;
+  }
+  if(!entry&&pool.entries.length<2){
+   if(owner.reservedBytes+bytes>64*1024*1024){owner.budgetFallbacks++;return;}
+   const buffer=g.createBuffer();if(!buffer){owner.allocationFailures++;return;}
+   entry={buffer,capacity:0,fence:null,retiredFence:null,failed:false};pool.entries.push(entry);
+  }
+  if(!entry){owner.busyFallbacks++;return;}
+  if(entry.capacity<bytes){
+   const available=64*1024*1024-owner.reservedBytes+entry.capacity;
+   if(bytes>available){owner.budgetFallbacks++;return;}
+   const capacity=Math.min(available,Math.ceil(bytes*1.25/16)*16);
+   owner.reservedBytes+=capacity-entry.capacity;entry.capacity=capacity;owner.allocations++;
+   try{
+    g.bindBuffer(g.ARRAY_BUFFER,entry.buffer);g.bufferData(g.ARRAY_BUFFER,capacity,g.DYNAMIC_DRAW);
+    // Do not consume an unrelated error flag. A failed optional allocation keeps
+    // its reservation and retires this store, then uses the original base path.
+    if(g.getBufferParameter(g.ARRAY_BUFFER,g.BUFFER_SIZE)!==capacity)throw Error('Optional instance store allocation');
+   }catch{entry.failed=true;owner.allocationFailures++;return;}
+  }
+  stream.buffer=entry.buffer;stream.poolEntry239=entry;stream.poolPrepared239=true;
+ }
+ restoreInstanceBase239(stream){
+  const previous=stream.buffer,base=stream.baseBuffer239,g=this.gl;
+  if(!base||previous===base){stream.poolEntry239=null;stream.poolPrepared239=false;return;}
+  // Direct external uploads bypass deferred preparation. Rebind any cached
+  // dynamic heads to their original base before applying the legacy upload.
+  for(const b of this.buckets?.values()||[])for(const view of b.lodViews||[b]){
+   const record=view.passes?.get(stream.poolPass239);
+   if(!record||record.instanceBuffer!==previous)continue;
+   g.bindVertexArray(record.vao);g.bindBuffer(g.ARRAY_BUFFER,base);
+   for(let a=3;a<=9;a++)g.vertexAttribPointer(a,4,g.FLOAT,false,112,record.offset*4+(a-3)*16);
+   record.instanceBuffer=base;record.instanceOffset=record.offset;
+  }
+  stream.buffer=base;stream.poolEntry239=null;stream.poolPrepared239=false;
+  if(this.instancePool239)this.instancePool239.externalFallbacks++;
+ }
+ recordInstancePoolPlan239(cached,stream){
+ if(stream.poolEntry239&&!stream.poolEntry239.failed&&this.instancePool239)this.instancePool239.plans.set(cached,stream.poolEntry239);
+}
+fenceInstancePool239(pass,cached=null){
+  if(this.qualityPreset!=='medium'&&this.qualityPreset!=='low')return;
+  const entry=cached?this.instancePool239?.plans.get(cached):this.instanceStreams?.get(pass===1?0:pass)?.poolEntry239;
+  if(!entry||entry.failed)return;
+  const g=this.gl,previous=entry.fence;
+  try{
+   const next=g.fenceSync(g.SYNC_GPU_COMMANDS_COMPLETE,0);
+   if(!next)throw Error('Optional instance fence unavailable');
+   entry.fence=next;if(previous)g.deleteSync(previous);
+  }catch{entry.failed=true;if(previous&&previous!==entry.fence)entry.retiredFence=previous;this.instancePool239.fenceFailures++;}
+ }
+ releaseInstancePool239(){
+  const owner=this.instancePool239;if(!owner)return;
+  const g=this.gl;
+  for(const pool of owner.passes.values())for(const entry of pool.entries){
+   for(const fence of new Set([entry.fence,entry.retiredFence]))if(fence)g.deleteSync(fence);
+   g.deleteBuffer(entry.buffer);
+  }
+  for(const stream of this.instanceStreams?.values()||[]){if(stream.baseBuffer239!==undefined)stream.buffer=stream.baseBuffer239;stream.poolEntry239=null;stream.poolPrepared239=false;}
+  owner.passes.clear();owner.plans=null;this.instancePool239=null;
+ }
+ instancePoolStatus239(){
+  const owner=this.instancePool239,entries=[...(owner?.passes.values()||[])].flatMap(p=>p.entries);
+  return{reservedBytes:owner?.reservedBytes||0,buffers:entries.length,fences:entries.reduce((n,e)=>n+!!e.fence+!!e.retiredFence,0),
+   allocations:owner?.allocations||0,reuseUploads:owner?.reuseUploads||0,busyFallbacks:owner?.busyFallbacks||0,budgetFallbacks:owner?.budgetFallbacks||0,
+   allocationFailures:owner?.allocationFailures||0,fenceFailures:owner?.fenceFailures||0,externalFallbacks:owner?.externalFallbacks||0};
+ }
  uploadInstances(stream){
   // Clear stale CPU aliases even when this visibility rebuild has no eligible
   // singleton. Fallback browsers may grow streams without buffer.transfer().
   if(stream.staticInstanceBindingWords&&stream.staticInstanceBindingWords.buffer!==stream.data.buffer)stream.staticInstanceBindingWords=null;
-  if(!stream.used)return;const g=this.gl,bytes=stream.used*4;g.bindBuffer(g.ARRAY_BUFFER,stream.buffer);
+  if(!stream.used)return;const g=this.gl,bytes=stream.used*4,entry=stream.poolEntry239;
+  if(entry&&stream.poolPrepared239&&!entry.failed&&(this.qualityPreset==='medium'||this.qualityPreset==='low')&&bytes<=entry.capacity){
+   stream.poolPrepared239=false;stream.capacity=Math.max(stream.capacity,bytes);g.bindBuffer(g.ARRAY_BUFFER,stream.buffer);
+   g.bufferSubData(g.ARRAY_BUFFER,0,stream.data,0,stream.used);this.stats.instanceUploadBytes+=bytes;this.instancePool239.reuseUploads++;return;
+  }
+  if(entry)this.restoreInstanceBase239(stream);
+  g.bindBuffer(g.ARRAY_BUFFER,stream.buffer);
   stream.capacity=Math.max(stream.capacity,bytes);g.bufferData(g.ARRAY_BUFFER,stream.capacity,g.DYNAMIC_DRAW);
   g.bufferSubData(g.ARRAY_BUFFER,0,stream.data,0,stream.used);this.stats.instanceUploadBytes+=bytes;
  }
@@ -1084,22 +1180,55 @@ class Engine{
  }
  // Only this engine's compiled-scene epoch may use indexed traversal. Any
  // supported geometry or Map membership/order edit must invalidate it first.
- invalidateBucketIndex(){pickR5Publication(this,'scene-mutation');
+ invalidateBucketIndex(){pickR5Publication(this,'scene-mutation');this.cancelPackedVisibility206?.();
   // CPU-only collectors also borrow this invalidation method.
   this.cancelInitialVisibility?.(true);
   this.bucketIndex=null;this.bucketIndexGeneration=(this.bucketIndexGeneration||0)+1;this.bucketIndexEpoch=null;
   if(this.bucketIndexIdle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(this.bucketIndexIdle);
   this.bucketIndexIdle=undefined;this.bucketIndexJob=null;
  }
+ // Private lower-tier metadata preparation. Original scene/index/GL work is unchanged.
+ cancelPackedVisibility206(){
+  const job=this.packedWarmup206,ready=this.packedWarmupReady206,failed=this.packedWarmupFailed206;
+  if(!job&&!ready&&!failed)return;
+  this.packedWarmup206=null;this.packedWarmupReady206=null;this.packedWarmupFailed206=null;
+  if(job?.idle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(job.idle);
+  job?.steps?.return();job?.entries?.return?.();
+  Y.Visibility.releaseWasm195(job?.epoch||ready||failed);
+ }
+ schedulePackedVisibility206(){
+  if(this.disposed||!['low','medium'].includes(this.qualityPreset)||!packedIdleState206(this)||!this.bucketIndex||!this.bucketIndexEpoch||typeof requestIdleCallback!=='function')return;
+  const visibility=Y.Visibility;
+  if(typeof visibility?.preparePacked206!=='function'||typeof visibility.releaseWasm195!=='function')return;
+  const epoch=this.bucketIndexEpoch,index=this.bucketIndex,buckets=this.buckets;
+  if(this.packedWarmup206||this.packedWarmupReady206===epoch||this.packedWarmupFailed206===epoch)return;
+  if(!(buckets instanceof Map)||Object.getPrototypeOf(buckets)!==Map.prototype||Object.hasOwn(buckets,'values')||Map.prototype.values!==packedMapValues206)return;
+  const job={epoch,index,buckets,entries:packedMapValues206.call(buckets),steps:null,idle:undefined};this.packedWarmup206=job;
+  const tick=deadline=>{
+   if(this.packedWarmup206!==job)return;
+   job.idle=undefined;
+   if(this.disposed||!['low','medium'].includes(this.qualityPreset)||!packedIdleState206(this)||this.bucketIndexEpoch!==epoch||this.bucketIndex!==index||this.buckets!==buckets){this.cancelPackedVisibility206();return;}
+   const end=performance.now()+2;
+   try{
+    while(deadline.timeRemaining()>.5&&performance.now()<end){
+     if(!job.steps){const next=job.entries.next();if(next.done){this.packedWarmup206=null;this.packedWarmupReady206=epoch;return;}job.steps=Y.Visibility.preparePacked206(next.value,epoch);}
+     if(job.steps.next().done)job.steps=null;
+    }
+    job.idle=requestIdleCallback(tick);
+   }catch(error){this.cancelPackedVisibility206();this.packedWarmupFailed206=epoch;}
+  };
+  job.idle=requestIdleCallback(tick);
+ }
  scheduleBucketIndex(){
   // No timer fallback: first frames and busy browsers retain original traversal.
   if(this.bucketIndex||this.bucketIndexJob||typeof requestIdleCallback!=='function')return;
+  this.cancelPackedVisibility206?.();
   const epoch=this.bucketIndexEpoch=Object.freeze({generation:this.bucketIndexGeneration||0}),buckets=this.buckets,job=this.bucketIndexJob=Y.Visibility.buildBucketIndexSteps(buckets,epoch);
   const tick=deadline=>{
    this.bucketIndexIdle=undefined;
    if(this.disposed||this.bucketIndexEpoch!==epoch||this.buckets!==buckets||this.state.bucketSpatialIndex===false){if(this.bucketIndexJob===job)this.bucketIndexJob=null;return;}
    const end=performance.now()+2;
-   while(deadline.timeRemaining()>.5&&performance.now()<end){const step=job.next();if(step.done){this.bucketIndex=step.value;this.bucketIndexJob=null;this.cancelInitialVisibility(true);for(const[slot,cache]of this.visibilityCaches)if(cache.generation!==epoch.generation)this.visibilityCaches.delete(slot);return;}}
+   while(deadline.timeRemaining()>.5&&performance.now()<end){const step=job.next();if(step.done){this.bucketIndex=step.value;this.bucketIndexJob=null;if(this.qualityPreset==='low'||this.qualityPreset==='medium')this.schedulePackedVisibility206();this.cancelInitialVisibility(true);for(const[slot,cache]of this.visibilityCaches)if(cache.generation!==epoch.generation)this.visibilityCaches.delete(slot);return;}}
    this.bucketIndexIdle=requestIdleCallback(tick);
   };
   this.bucketIndexIdle=requestIdleCallback(tick);
@@ -1118,10 +1247,11 @@ class Engine{
  }
  *buildVisiblePlan(context,stream,cooperative=false){
   const{vp,slot,state,hidden,lodEye,focal,waterLevel,reflection}=context,planes=slot===3?[...this.reflectionPlanes(vp,reflection.scissor,state,reflection.target),...(reflection.footprintPlanes||[])]:M.frustum(vp),items=[],clear=[],selectionResult={count:0,culled:0};let submitted=0,triangles=0,culled=0;
-   let batch=0;
+   const fastContext195=!cooperative&&(this.qualityPreset==='low'||this.qualityPreset==='medium')&&M.frustum===wasmFrustum195?Y.Visibility.wasmContext195?.(planes,lodEye,focal,state,stream,this.bucketIndexEpoch,this):null;
+   let batch=0;try{
    for(const[name,b]of (state.bucketSpatialIndex===false?this.buckets:Y.Visibility.indexedBuckets(this.bucketIndex,this.buckets,planes,state,this.bucketIndexEpoch))){
     if(cooperative&&++batch%16===0)yield;
-    if(hidden?.has(name)||(slot===2&&(b.uniformMaterial===4||b.uniformMaterial===8||b.uniformMaterial===44||b.uniformMaterial===47))||(slot===3&&b.uniformMaterial===4))continue;const result=Y.Visibility.select(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch);culled+=result.culled;if(!result.count)continue;
+    if(hidden?.has(name)||(slot===2&&(b.uniformMaterial===4||b.uniformMaterial===8||b.uniformMaterial===44||b.uniformMaterial===47))||(slot===3&&b.uniformMaterial===4))continue;const result=(fastContext195?Y.Visibility.packedSelect195(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch,fastContext195):Y.Visibility.select(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch));culled+=result.culled;if(!result.count)continue;
     if(this.qualityPreset!=='high'&&b.lodViews){
      const parts=Y.QualityLOD.partition(this,b,context,stream,result.count);
      for(const part of parts){const record=this.instanceCache(part.b,slot,part.count,stream,null,state.deferredInstanceVAO!==false);items.push({b:part.b,record,ranges:null});submitted+=part.count;triangles+=part.b.vertexCount/3*part.count;}
@@ -1139,6 +1269,7 @@ class Engine{
    const clearStart=items.length;clear.sort((a,b)=>b.depth-a.depth);items.push(...clear);
    const grouped=this.groupDraws(items,clearStart);
   return{items,clearStart,...grouped,submitted,triangles:Math.round(triangles),culled,hasWater:items.some(({b})=>b.materials.has(4)),water:items.filter(({b})=>b.uniformMaterial===4&&b.count===1).map(({b})=>b),stream};
+  }finally{if(fastContext195)Y.Visibility.endWasmContext195(fastContext195);}
  }
  cancelInitialVisibility(clearPlans=false){
   if(this.initialVisibilityIdle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(this.initialVisibilityIdle);
@@ -1244,8 +1375,9 @@ class Engine{
    const{stream:cpuStream,...records}=plan;
    // Only emitted draw heads need VAOs; retain every logical stream segment.
    // Materialize before upload, matching the original GL update ordering.
+   this.prepareInstancePool239?.(stream,slot,state);
    if(state.deferredInstanceVAO!==false)for(const item of records.drawItems)item.record.vao=this.instanceVAO(item.b,slot,stream,item.record.offset,item.record.count).vao;
-   this.uploadInstances(stream);cached={key,generation:this.bucketIndexGeneration||0,...records};this.visibilityCaches.set(slot,cached);this.stats.visibilityBuilds++;
+   this.uploadInstances(stream);cached={key,generation:this.bucketIndexGeneration||0,...records};this.recordInstancePoolPlan239?.(cached,stream);this.visibilityCaches.set(slot,cached);this.stats.visibilityBuilds++;
   }
   return cached;
  }
@@ -1292,7 +1424,7 @@ class Engine{
    else if(ranges){for(const[first,count]of ranges){if(pass===1&&pickR5ShouldSkip(this,p,vp,cached,b,record,ranges,first,count))continue;if(b.resource.indexBuffer)g.drawElementsInstanced(g.TRIANGLES,count,b.resource.indexType==='uint16'?g.UNSIGNED_SHORT:g.UNSIGNED_INT,first*(b.resource.indexType==='uint16'?2:4),record.count);else g.drawArraysInstanced(g.TRIANGLES,first,count,record.count);calls++;}}
    else{if(b.resource.indexBuffer)g.drawElementsInstanced(g.TRIANGLES,b.vertexCount,b.resource.indexType==='uint16'?g.UNSIGNED_SHORT:g.UNSIGNED_INT,b.resource.indexByteOffset208||0,record.count);else g.drawArraysInstanced(g.TRIANGLES,0,b.vertexCount,record.count);calls++;}
   }if(cached.drawClearStart===cached.drawItems.length&&(pass===0||pass===3)){this.people?.draw(vp,eye,pass);if(this.state.skyAfterOpaque!==false)this.sky(vp,eye,true);textureState=[];}
-  }finally{if(blending){g.depthMask(true);g.disable(g.BLEND);}g.bindVertexArray(null);}
+  }finally{if(blending){g.depthMask(true);g.disable(g.BLEND);}g.bindVertexArray(null);this.fenceInstancePool239?.(pass,cached);}
   if(pass===0){const people=this.people?.active&&this.people.mask?this.people.metrics:null;Object.assign(this.stats,{drawnInstances:cached.submitted-skipped45Instances+(people?.instances||0),drawnTriangles:cached.triangles-skipped45Triangles+(people?.triangles||0),detailCulled:cached.culled,drawCalls:calls+(people?.mainCalls||0)+(people?.shadowCalls||0),people});}
  }
 
@@ -1474,3 +1606,6 @@ P.mergePage208=function(a,b){const ma=a.b.resource,mb=b.b.resource,p=ma.page208;
   return value;
  };
 })(YY);
+
+/* Private D195 original-method ownership registration. */
+YY.Visibility?.registerWasmEngine195?.(YY.Engine.prototype);

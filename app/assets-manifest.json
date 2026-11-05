@@ -1193,8 +1193,8 @@
     },
     {
       "path": "app/assets/runtime-v46/scene/manifest.json",
-      "bytes": 9575140,
-      "sha256": "722c5caf66fc1136161c6063fd0c7a861ad3e2c954e0ff2a80210ef5c1639d8c"
+      "bytes": 9575130,
+      "sha256": "67626609d8a0b7c7c0d1fccac337746e857db9ac1bee628af0c678630c87c3c5"
     },
     {
       "path": "app/assets/runtime-v46/scene/meshopt_decoder.js",
@@ -1223,8 +1223,8 @@
     }
   ],
   "archive": {
-    "file": "pku-3d-assets-1.5.2.zip",
-    "bytes": 316789299,
-    "sha256": "08ab28a40e8ab09eaeca64705c3b0ac32c9bc76a1bb9af1d68a1615451098076"
+    "file": "pku-3d-assets-1.5.3.zip",
+    "bytes": 316789289,
+    "sha256": "e961293f6379bf05066fb3dc04284452cb3520734fd0ec780bde30ee19c80418"
   }
 }

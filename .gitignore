@@ -192,3 +192,4 @@ node_modules/
 !/app/tests/reflection-descriptor-cache.test.cjs
 
 !/app/tests/quality-lod.test.cjs
+!/app/tests/pool239.test.cjs

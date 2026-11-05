@@ -115,6 +115,8 @@ Separate maintenance releases from renderer changes. A version-only runtime edit
 
 Run `npm run deploy` to build and push the generated website to `gh-pages`. GitHub Pages publishes that branch at `https://sldyns.github.io/PKU-3D/`. The `main` branch contains the editable source; `gh-pages` contains only the generated website. Publishing requires Git push access to this repository.
 
+The publisher clones the generated branch without checking out its old files and uses filesystem copy-on-write where supported, with ordinary copies as a portable fallback. It still stages the complete generated tree, so files removed from the build are removed from the published site.
+
 ## Local reference material
 
 Development photographs, videos and research records are excluded from Git and release packages. In a maintainer workspace that already has these files, `npm run dev:references` serves the local source; add `?dev=1` to display building references. This mode is restricted to local hosts and is unavailable on GitHub Pages.
