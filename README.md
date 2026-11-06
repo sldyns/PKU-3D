@@ -8,7 +8,7 @@ Built with **GPT-6 Astra**. All source data and modeling references are publicly
 
 **[Demo](https://sldyns.github.io/PKU-3D/)** · [中文](README.zh-CN.md) · [Releases](https://github.com/sldyns/PKU-3D/releases) · [Contributing](CONTRIBUTING.md)
 
-[![Version](https://img.shields.io/badge/version-1.5.4-8b302c)](https://github.com/sldyns/PKU-3D/releases/tag/v1.5.4)
+[![Version](https://img.shields.io/badge/version-1.5.5-8b302c)](https://github.com/sldyns/PKU-3D/releases/tag/v1.5.5)
 [![WebGL 2](https://img.shields.io/badge/rendering-WebGL%202-2f6555)](https://sldyns.github.io/PKU-3D/)
 
 </div>
@@ -42,6 +42,8 @@ PKU-3D is an interactive model of Peking University's Yanyuan campus, with indiv
 Camera-motion performance still falls short of stable 60 FPS in the retained tests. See [performance status and validation scope](docs/development/performance.md).
 
 Version 1.5.4 reduces the selected scene download from 100.3 MB to 86.3 MB and streams its 99 chunks through three requests. Reversible integer coding preserves every decoded model byte; High remains the default with the same source images, shadows, reflections and antialiasing. Legacy and offline assets remain available. See the [performance scope and limits](docs/development/performance.md) for measured startup results and the retained 1.5.3 response improvements.
+
+Version 1.5.5 adds **CPU 优化（实验）**, an optional High-quality CPU experiment in the lighting panel, **off by default**. Enabling it batches the original visibility calculations and instance gathering using a fixed 16 MiB CPU arena prepared during idle time. Model detail, images, shadows, reflections and antialiasing stay unchanged. The retained comparison measured lower CPU rendering cost, with frame-pacing regressions in some operations; see [performance and validation scope](docs/development/performance.md).
 
 ## Controls
 

@@ -5,7 +5,7 @@ assert(start>=0&&end>start);
 function fixture(saved,options={}){
  const control={value:''},messages=[],writes=[],calls=[];
  const engine={qualityPreset:'medium',disposed:false,setQualityPreset(value){calls.push(value);if(options.fail||!['low','medium','high'].includes(value))throw Error('allocation/validation failure');this.qualityPreset=value;return true;}};
- const context={engine,ready:true,lastVisualKey:'old',Set,localStorage:{getItem(){if(options.blockRead)throw Error('blocked');return saved;},setItem(key,value){if(options.blockWrite)throw Error('blocked');writes.push([key,value]);}},$:()=>control,say:message=>messages.push(message)};
+ const context={engine,state:{highVisibilityBatch:false},ready:true,lastVisualKey:'old',Set,localStorage:{getItem(){if(options.blockRead)throw Error('blocked');return saved;},setItem(key,value){if(options.blockWrite)throw Error('blocked');writes.push([key,value]);}},$:()=>control,say:message=>messages.push(message)};
  vm.createContext(context);vm.runInContext(source.slice(start,end)+'\nglobalThis.preference=()=>qualityPreset;',context);
  engine.qualityPreset=context.preference();
  return{context,control,messages,writes,calls,engine,change(value){control.value=value;context.changeQualityPreset();}};

@@ -83,7 +83,9 @@
     "quality-preference.test.cjs",
     "engine-quality.test.cjs",
     "quality-lod.test.cjs",
-    "pool239.test.cjs"
+    "pool239.test.cjs",
+    "visibility-high-packed.test.cjs",
+    "high-cpu-preference.test.cjs"
   ],
   "packagingTests": [
     "runtime-scene-package284.test.py",

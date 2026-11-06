@@ -199,3 +199,8 @@ node_modules/
 
 !/app/tests/quality-lod.test.cjs
 !/app/tests/pool239.test.cjs
+
+!/app/tests/visibility-high-packed.test.cjs
+!/app/tools/visibility-high-batch.wat
+
+!/app/tests/high-cpu-preference.test.cjs

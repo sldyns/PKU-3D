@@ -44,7 +44,7 @@ test('context loss cancels navigation; actual recovery init renders fresh labels
  h.c.Y.Engine=function(){next={...old,resize(){},compilePrograms(){},dispose(){}};next.project=h.c.project.bind(next);return next;};
  h.c.Y.Pedestrians46={create:()=>undefined};h.c.loadRenderResources=async()=>({network:{}});
  const start=source.indexOf('async function init(recover=false)'),end=source.indexOf('// Keep disclosure buttons accurate',start);assert(start>=0&&end>start);
- vm.runInContext(source.slice(start,end),h.c);
+ vm.runInContext(line(source,'syncHighCPUControl'),h.c);vm.runInContext(source.slice(start,end),h.c);
  h.c.browseCamera.focus(()=>{h.c.orbit.target[0]+=30});assert(h.c.browseCamera.goal);
  let prevented=false;events.get('webglcontextlost')({preventDefault(){prevented=true;}});
  assert(prevented);assert.equal(disposed,1);assert.equal(h.c.ready,false);assert.equal(h.c.browseCamera.goal,null);assert.equal(h.c.root.dataset.ready,'recovering');

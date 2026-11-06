@@ -8,7 +8,7 @@
 
 **[在线演示](https://sldyns.github.io/PKU-3D/)** · [English](README.md) · [版本发布](https://github.com/sldyns/PKU-3D/releases) · [贡献指南](CONTRIBUTING.zh-CN.md)
 
-[![Version](https://img.shields.io/badge/version-1.5.4-8b302c)](https://github.com/sldyns/PKU-3D/releases/tag/v1.5.4)
+[![Version](https://img.shields.io/badge/version-1.5.5-8b302c)](https://github.com/sldyns/PKU-3D/releases/tag/v1.5.5)
 [![WebGL 2](https://img.shields.io/badge/rendering-WebGL%202-2f6555)](https://sldyns.github.io/PKU-3D/)
 
 </div>
@@ -42,6 +42,8 @@ PKU-3D 是北京大学燕园校区的交互式三维模型，包含楼宇、院�
 现有测试中，镜头交互仍未达到稳定 60 FPS。测量结果与验证范围见[性能说明](docs/development/performance.md)。
 
 1.5.4 将选中的场景下载量从 100.3 MB 减至 86.3 MB，并通过三个请求流式读取原有 99 个块。可逆整数编码保留全部解码模型字节；High 仍为默认，原始图片、阴影、反射和抗锯齿保持不变。原格式及离线资源继续保留。启动实测的适用范围与沿用的 1.5.3 响应优化见[性能说明](docs/development/performance.md)。
+
+1.5.5 在「光影与生活」中新增**「CPU 优化（实验）」**，仅在高画质下生效，**默认关闭**。开启后批量执行原有可见性计算与实例收集，使用空闲时间准备的固定 16 MiB CPU 内存。模型细节、原始图片、阴影、反射和抗锯齿保持不变。已有对照显示 CPU 开销降低，但部分操作的帧间隔回退，因此保留选择权；验证结果及范围见[性能说明](docs/development/performance.md)。
 
 ## 操作
 

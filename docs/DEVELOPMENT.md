@@ -49,6 +49,10 @@ The released viewer uses WebGL 2. Fresh viewers start at High; valid saved quali
 
 The slower WebGPU experiment is excluded from the release. Keep research results and intermediate captures in the local archive. A lower isolated GPU interval does not establish a complete-viewer improvement or stable interactive 60 FPS.
 
+High can prepare a separate, fixed 16 MiB visibility arena during bounded idle callbacks. Group classification and accepted-span gathering retain the original Float64 arithmetic, imported `Math.hypot`, detail thresholds and instance order; the existing SIMD group body is unchanged. See `app/tools/visibility-high-batch.wat` for the checked-in kernel source. Only Engine-owned metadata under the current scene epoch is eligible. Unsupported states, incomplete preparation and failures keep the original selector. Retire all typed views and scheduled work on invalidation, quality changes, disposal or context loss. High keeps its original GPU instance uploads and two-frame admission queue.
+
+This experiment is off by default. Only an explicit `state.highVisibilityBatch === true` admits preparation or selection; disabling it retires the arena and retains the original scalar path. The lighting-panel choice has its own saved preference and remains independent of the quality preset. Do not present the enabled-path CPU measurements as a passed combined pacing gate.
+
 ## First-person navigation
 
 The navigation controller in `app-v29.js` projects the starting point onto the existing road graph. Manual movement stays within the connected road corridors and rejects mapped building footprints. These footprint checks do not model every wall, tree, stair or gate. Route playback uses the same graph, stops at overlapping building footprints, and never creates links between disconnected roads. Eye height follows the landscape at 1.68 metres; exit restores the previous camera and label preference. Input is cleared on focus loss, page hiding and WebGL context loss. Navigation changes do not alter the baked scene.

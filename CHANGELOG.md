@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.5
+
+- Add an off-by-default High CPU experiment with an explicit, saved switch in the lighting panel. Batch original visibility classification and ordered instance gathering in a fixed 16 MiB CPU arena prepared during idle callbacks; disabling the option releases it.
+- Retain the original double-precision decisions, `Math.hypot`, SIMD group instructions and complete instance bytes. Unsupported states and incomplete preparation use the original scalar selector.
+- Release every arena view on cancellation, quality changes, scene invalidation, disposal and context recovery. Keep the original two-frame GPU queue and upload paths.
+- The retained 192-case comparison measured about 5.4% lower aggregate High render-wall cost, with frame-spacing regressions in some operations and a negative combined adoption gate. Keep the experiment optional; it is not a general smoothness or stable-60-FPS claim.
+- Preserve all scene assets, model detail, source image resolution, shadow/reflection settings and antialiasing.
+
 ## 1.5.4
 
 - Reduce selected scene transfer from 100,255,740 to 86,273,657 bytes with reversible integer delta coding; preserve all 99 raw scene chunks, model detail, source images and rendering settings.

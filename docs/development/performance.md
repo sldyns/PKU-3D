@@ -1,5 +1,21 @@
 # Rendering performance
 
+## 1.5.5 High CPU work
+
+The lighting panel offers an explicit High CPU experiment, off by default. When enabled, High can batch original visibility classification and ordered instance gathering in a separate fixed 16 MiB CPU arena, prepared cooperatively during idle callbacks. The original Float64 decisions, `Math.hypot`, SIMD group instructions, detail thresholds and record bits are preserved. Unsupported states, incomplete preparation and failures retain the original scalar path. Disabling the option, invalidation, quality changes, disposal and context loss retire scheduled work and every arena view. The saved choice is independent of the quality preset; Medium and Low retain their existing paths.
+
+The scene assets, model detail, source images, shaders, shadow/reflection targets, antialiasing, GPU upload policy and two-frame queue remain unchanged. This update targets CPU rendering cost; submission cadence, interaction latency and physical presentation remain separate measurements.
+
+The retained accelerator comparison with unchanged 1.5.4 completed 192 qualified input originals in four paired blocks, across two views, three qualities and rotation, pan and both zoom directions. Conservative aggregate High ratios were 0.94581 for render-wall median, 0.95498 for render-wall P95, 1.00027 for median submission spacing, 1.02962 for P95 spacing and 0.98102 for event-to-render-return P95. The initial 16-case screen's 8.7% CPU reduction is not the complete result: the full comparison measured about 5.4%. One CPU block was approximately flat rather than improved.
+
+The combined adoption gate remains negative. High campus zoom-out P95 spacing increased about 14.4%, and High lake rotation about 8.7%; several unchanged control cells also exceeded their original limits. No thresholds or original verdicts were changed. These results characterize the tested enabled accelerator path before its UI preference gate; they do not establish better pacing in every operation, input-to-photon improvement or stable 60 FPS. The explicit option makes the CPU tradeoff available while preserving the default scalar High behavior.
+
+The additional High arena is an explicit 16 MiB allocation only when the option prepares successfully; a JavaScript heap reading alone does not measure all retained native memory. Strict image, ordered-stream, lifecycle and default-loading checks are separate from the negative performance adoption verdict.
+
+The final optional build passes 540 JavaScript and 23 packaging checks. With the option enabled, twelve complete before/after RGBA and HDR pairs and their ordered instance streams are byte-identical across all three qualities; six actual context recoveries pass. At 96 real reference motion states, all 288 main, shadow and reflection stream/ordered-plan comparisons are exact. Actual local-file loading, enabled recovery, disposal, UI on/off, saved-choice reload and narrow-layout checks also pass.
+
+With the option off, eight fresh local-browser ABBA startup runs measured first-render completion medians of 1,276.70 and 1,278.85 ms for reference and candidate; original-fence readiness was 1,399.05 and 1,401.65 ms. The original five-percent startup and reported-heap limits passed, as did a separate 16-case immediate-input screen. These default-path checks do not change the enabled-path pacing failures above, measure physical presentation or predict public-network loading time.
+
 ## 1.5.4 lossless startup transport
 
 The unchanged complete scene has 99 chunks. Explicitly approved integer delta coding is selected for 70 chunks; one retains the existing modern codec and 28 retain legacy. Selected compressed bytes fall from 100,255,740 to 86,273,657, a 13.95% reduction. Three deterministic packs replace 99 chunk requests. Every original gzip and script fallback remains in the distribution, so archive size and selected network bytes are separate quantities. No geometry, textures, instance order, shadow/reflection resolution or antialiasing settings are reduced. Startup still waits for the complete scene and required rendering resources.
