@@ -847,6 +847,133 @@ YY.SCAN1119_TEXTURE315={"width":1024,"height":512,"materialBase":48,"layers":[{"
 /* Yanyuan WebGL2 renderer; original scene assets remain local. */
 (function(Y){'use strict';const M=Y.M;const wasmFrustum195=M?.frustum,packedMapValues206=Map.prototype.values;
  function packedIdleState206(engine){const state=Object.getOwnPropertyDescriptor(engine,'state')?.value;if(!state||(Object.getPrototypeOf(state)!==Object.prototype&&Object.getPrototypeOf(state)!==null))return false;const d=Object.getOwnPropertyDescriptor(state,'bucketSpatialIndex');return d?'value'in d&&d.value!==false:!('bucketSpatialIndex'in state);}
+// High-only byte-exact visibility compaction. No GL work or mesh changes.
+const HighVisibilityBatch=(()=>{
+ const kernelBytes=new Uint8Array([0,97,115,109,1,0,0,0,1,47,5,96,7,127,127,127,127,127,127,127,1,127,96,3,124,124,124,1,124,96,4,127,127,127,127,1,127,96,8,127,127,127,127,127,127,127,127,1,127,96,5,127,127,127,127,127,0,2,14,1,3,101,110,118,6,104,121,112,111,116,51,0,1,3,5,4,0,2,3,4,5,6,1,1,128,2,128,2,7,37,4,6,109,101,109,111,114,121,2,0,5,103,114,111,117,112,0,1,5,98,97,116,99,104,0,3,8,99,108,97,115,115,105,102,121,0,4,10,130,12,4,239,4,2,9,127,11,123,2,64,3,64,32,7,32,3,79,13,1,32,0,32,2,32,7,106,65,2,116,106,33,8,32,0,32,1,65,6,108,106,32,2,32,7,106,65,3,116,106,33,9,32,8,253,93,2,0,253,95,33,16,32,8,32,1,106,253,93,2,0,253,95,33,17,32,8,32,1,65,2,108,106,253,93,2,0,253,95,33,18,32,8,32,1,65,3,108,106,253,93,2,0,253,95,33,19,253,12,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,33,20,32,7,65,1,106,32,3,79,4,64,253,12,255,255,255,255,255,255,255,255,0,0,0,0,0,0,0,0,33,20,11,32,4,69,4,64,65,0,33,10,2,64,3,64,32,10,32,6,65,5,116,79,13,1,32,20,32,10,43,3,0,253,20,32,16,253,242,1,32,10,43,3,8,253,20,32,17,253,242,1,253,240,1,32,10,43,3,16,253,20,32,18,253,242,1,253,240,1,32,10,43,3,24,253,20,253,240,1,32,19,253,237,1,253,73,253,79,33,20,32,20,253,83,69,13,1,32,10,65,32,106,33,10,12,0,11,11,11,32,20,253,196,1,33,12,32,5,32,12,65,0,71,113,4,64,32,16,65,128,8,43,3,0,253,20,253,241,1,33,21,32,17,65,136,8,43,3,0,253,20,253,241,1,33,22,32,18,65,144,8,43,3,0,253,20,253,241,1,33,23,32,21,32,21,253,242,1,32,22,32,22,253,242,1,253,240,1,32,23,32,23,253,242,1,253,240,1,33,24,32,9,253,0,3,0,33,25,32,25,65,152,8,43,3,0,253,20,253,242,1,68,51,51,51,51,51,51,235,63,253,20,253,243,1,33,26,32,20,32,25,68,0,0,0,0,0,0,0,0,253,20,253,72,68,0,0,0,0,0,0,240,63,253,20,32,24,253,245,1,32,26,32,26,253,242,1,253,74,253,78,253,79,33,20,32,8,32,1,65,4,108,106,253,93,2,0,253,95,65,152,8,43,3,0,253,20,253,242,1,68,154,153,153,153,153,153,249,63,253,20,253,243,1,33,26,32,20,32,8,32,1,65,5,108,106,253,93,2,0,253,95,68,0,0,0,0,0,0,0,0,253,20,253,71,32,24,68,0,0,0,0,0,129,240,64,253,20,253,76,32,24,32,26,32,26,253,242,1,253,74,253,78,253,78,253,79,33,20,11,32,20,253,196,1,33,11,32,15,32,12,105,32,11,105,107,106,33,15,32,7,65,32,73,4,64,32,13,32,11,32,7,116,114,33,13,5,32,14,32,11,32,7,65,32,107,116,114,33,14,11,32,7,65,2,106,33,7,12,0,11,11,65,128,16,32,13,54,2,0,65,132,16,32,14,54,2,0,32,15,11,84,1,1,127,32,1,4,64,32,0,32,1,65,1,107,65,3,116,106,33,4,32,4,40,2,0,32,4,40,2,4,106,32,2,70,4,64,32,4,32,4,40,2,4,32,3,106,54,2,4,32,1,15,11,11,32,0,32,1,65,3,116,106,33,4,32,4,32,2,54,2,0,32,4,32,3,54,2,4,32,1,65,1,106,11,223,2,1,13,127,2,64,3,64,32,8,32,3,79,13,1,32,3,32,8,107,33,10,32,10,65,192,0,75,4,64,65,192,0,33,10,11,32,6,32,9,65,2,116,106,40,2,0,33,11,65,0,33,12,65,0,33,13,32,11,65,2,70,4,64,32,20,32,10,106,33,20,11,32,11,65,1,70,4,64,32,10,65,32,79,4,64,65,127,33,12,5,65,1,32,10,116,65,1,107,33,12,11,32,10,65,32,75,4,64,32,10,65,192,0,70,4,64,65,127,33,13,5,65,1,32,10,65,32,107,116,65,1,107,33,13,11,11,11,32,11,65,3,79,4,64,32,20,32,0,32,1,32,2,32,8,106,32,10,32,11,65,3,70,32,4,32,5,16,1,106,33,20,65,128,16,40,2,0,33,12,65,132,16,40,2,0,33,13,11,65,0,33,14,2,64,3,64,32,14,65,2,79,13,1,32,14,4,127,32,13,5,32,12,11,33,15,2,64,3,64,32,15,69,13,1,32,15,104,33,16,32,15,32,16,118,65,127,115,104,33,17,32,7,32,18,32,2,32,8,106,32,14,65,5,116,32,16,106,106,32,17,16,2,33,18,32,19,32,17,106,33,19,32,16,32,17,106,65,32,79,4,127,65,0,5,32,15,65,127,32,16,32,17,106,116,113,11,33,15,12,0,11,11,32,14,65,1,106,33,14,12,0,11,11,32,8,65,192,0,106,33,8,32,9,65,1,106,33,9,12,0,11,11,65,136,16,32,18,54,2,0,65,140,16,32,19,54,2,0,32,20,11,216,3,2,7,127,9,124,65,152,8,43,3,0,33,20,2,64,3,64,32,5,32,0,79,13,1,65,128,192,16,32,5,65,40,108,106,33,7,32,7,43,3,0,33,12,32,7,43,3,8,33,13,32,7,43,3,16,33,14,32,7,43,3,24,68,0,0,0,0,0,0,0,0,32,7,43,3,32,162,160,33,15,65,1,33,9,65,0,33,10,65,0,33,6,2,64,3,64,32,6,32,1,79,13,1,32,6,65,32,108,33,7,32,7,43,3,0,32,12,162,32,7,43,3,8,32,13,162,160,32,7,43,3,16,32,14,162,160,32,7,43,3,24,160,33,16,32,16,32,15,154,99,4,64,65,1,33,10,12,2,11,32,16,32,15,99,4,64,65,0,33,9,11,32,6,65,1,106,33,6,12,0,11,11,65,3,65,4,32,9,27,33,11,32,10,4,64,65,0,33,11,5,32,9,32,3,113,65,128,128,21,32,5,106,45,0,0,69,113,4,64,65,128,128,19,32,5,65,32,108,106,33,8,32,12,65,128,8,43,3,0,161,32,13,65,136,8,43,3,0,161,32,14,65,144,8,43,3,0,161,16,0,33,17,32,17,32,15,160,33,19,68,0,0,0,0,0,0,0,0,32,17,32,15,161,165,33,18,32,2,32,18,68,0,0,0,0,0,64,112,64,102,32,4,69,113,32,18,32,8,43,3,16,32,20,162,68,154,153,153,153,153,153,249,63,163,100,113,68,0,0,0,0,0,0,240,63,32,18,165,32,8,43,3,24,32,20,162,68,51,51,51,51,51,51,235,63,163,100,114,113,4,64,65,2,33,11,5,32,2,69,32,19,68,0,0,0,0,0,64,112,64,99,32,19,32,8,43,3,0,32,20,162,68,154,153,153,153,153,153,249,63,163,99,114,68,0,0,0,0,0,0,240,63,32,19,165,32,8,43,3,8,32,20,162,68,51,51,51,51,51,51,235,63,163,99,113,114,4,64,65,1,33,11,11,11,11,11,65,128,32,32,5,65,4,108,106,32,11,54,2,0,32,5,65,1,106,33,5,12,0,11,11,11]);
+ const jobs=new WeakMap(),wasmProofs195=new WeakMap(),wasmContexts195=new WeakSet();
+ const wasmArrayIterator195=Array.prototype[Symbol.iterator],wasmMapIterator195=Map.prototype[Symbol.iterator];
+ let module,wasmEngineMethods195;
+ const little=new Uint8Array(new Uint32Array([1]).buffer)[0]===1;
+ const values=Map.prototype.values,visibility=Y.Visibility||{},scalarSelect=visibility.select,indexed=visibility.indexedBuckets,sphereVisible=visibility.sphereVisible;
+ function* prepareWasm195(bucket,epoch,arena){
+  wasmProofs195.delete(bucket);
+  const own=k=>Object.getOwnPropertyDescriptor(bucket,k)?.value;
+  const data=own('data'),sp=own('spatial'),groups=own('groups'),flags=own('essentialFlags'),surface=own('surfaceWidths'),count=own('count'),n=data?.length/28;
+  if(!epoch||!(data instanceof Float32Array)||!(sp instanceof Float32Array)||!(groups instanceof Float64Array)||!(flags instanceof Uint8Array)||(surface!==null&&!(surface instanceof Float64Array))||!Number.isInteger(n)||n<128||count!==n||sp.length!==n*5||flags.length!==n||surface&&surface.length!==n||groups.length!==Math.ceil(n/64)*5)return;
+  if([data,sp,groups,flags,surface].some(a=>a&&(Object.getPrototypeOf(a.buffer)!==ArrayBuffer.prototype||a.buffer.resizable)))return;
+  if(!arena||arena.failed)return;
+  const padded=(n+1)&~1,stride=padded*4,base=arena.used,next=base+stride*8;
+  if(!Number.isSafeInteger(next)||next>arena.buffer.byteLength)return;
+  // Reserve before yielding. Invalid records leave a bounded unused reservation;
+  // they never rewind past another concurrent builder's published allocation.
+  arena.used=next;const f=arena.f32,offset=base/4,widthOffset=(base+stride*6)/8;
+  try{for(let k=0;k<n;k++){
+   const j=k*5,i=k*28,id=data[i+21],x=sp[j],y=sp[j+1]+(id===0?0*data[i+23]:0),z=sp[j+2],r=sp[j+3],size=sp[j+4],width=data[i+20]===38?size:(surface?surface[k]:0);
+   if(![id,x,y,z,r,size,width].every(Number.isFinite)||r<0||(id>=950000&&id<960000))return;
+   f[offset+k]=x;f[offset+padded+k]=y;f[offset+padded*2+k]=z;f[offset+padded*3+k]=r;f[offset+padded*4+k]=size;f[offset+padded*5+k]=flags[k]||id===0?1:0;arena.f64[widthOffset+k]=width;
+    // Original binary32 fields and Boolean only; width stays binary64.
+    // Effective Y includes the original signed-zero addition.
+    if(!Object.is(f[offset+padded+k],y))return;
+   if((k&63)===63){yield;if(arena.failed)return;}
+  }}catch{return;}
+  wasmProofs195.set(bucket,{epoch,data,sp,groups,flags,surface,count:n,arena,base,stride,lo:0,hi:0});arena.buckets++;arena.instances+=n;
+ }
+
+ function enabled(e){const state=Object.getOwnPropertyDescriptor(e,'state')?.value,d=state&&Object.getOwnPropertyDescriptor(state,'highVisibilityBatch');return !!d&&'value'in d&&d.value===true;}
+ function context(planes,eye,focal,state,scratch,epoch,engine){
+  if(!enabled(engine)||state.highVisibilityBatch!==true)return null;
+  const j=jobs.get(engine),arena=j?.arena,trusted=wasmEngineMethods195;if(typeof scalarSelect!=="function"||!j||j.epoch!==epoch||j.failed||!packedIdleState206(engine))return null;
+  if(!trusted||Y.Visibility.preparePacked206!==trusted.prepare||!arena||arena.failed||Object.getPrototypeOf(engine)!==trusted.proto||Object.getOwnPropertyDescriptor(Y.Visibility,'select')?.value!==trusted.select||Object.getOwnPropertyDescriptor(Y.Visibility,'packedSelect195')?.value!==trusted.packed||Object.getOwnPropertyDescriptor(Y.Visibility,'indexedBuckets')?.value!==trusted.indexed||!Number.isFinite(focal))return null;
+  for(const[k,v]of Object.entries(trusted.methods)){const d=Object.getOwnPropertyDescriptor(engine,k)||Object.getOwnPropertyDescriptor(trusted.proto,k);if(d?.value!==v)return null;}
+  const buckets=Object.getOwnPropertyDescriptor(engine,'buckets')?.value,data=Object.getOwnPropertyDescriptor(scratch,'data')?.value;
+  if(!(buckets instanceof Map)||Object.getPrototypeOf(buckets)!==Map.prototype||Object.getOwnPropertyDescriptor(buckets,Symbol.iterator)||Map.prototype[Symbol.iterator]!==wasmMapIterator195||Array.prototype[Symbol.iterator]!==wasmArrayIterator195||!(data instanceof Float32Array)||Object.getPrototypeOf(scratch)!==Object.prototype)return null;
+  const stateKeys=['selected','isolate','explode','vegetation','detailLOD'];
+  if(Object.getPrototypeOf(state)!==Object.prototype&&Object.getPrototypeOf(state)!==null)return null;
+  const values={};for(const k of stateKeys){const d=Object.getOwnPropertyDescriptor(state,k);if(d&&!('value'in d)||!d&&k in state)return null;values[k]=d?.value;}
+  if(values.selected!==0||values.isolate!==0||values.explode!==0||values.vegetation!==true||![undefined,true,false].includes(values.detailLOD))return null;
+  if(!Array.isArray(eye)||Object.getPrototypeOf(eye)!==Array.prototype||eye.length!==3)return null;
+  const xyz=[];for(let k=0;k<3;k++){const x=Object.getOwnPropertyDescriptor(eye,String(k))?.value;if(!Number.isFinite(x))return null;xyz.push(x);}
+  if(!Array.isArray(planes)||Object.getPrototypeOf(planes)!==Array.prototype||planes.length<1||planes.length>32||Object.getOwnPropertyDescriptor(planes,Symbol.iterator))return null;
+  const coefficients=[];for(let k=0;k<planes.length;k++){
+   const p=Object.getOwnPropertyDescriptor(planes,String(k))?.value;
+   if(!Array.isArray(p)||Object.getPrototypeOf(p)!==Array.prototype||p.length!==4)return null;
+   for(let j=0;j<4;j++){const value=Object.getOwnPropertyDescriptor(p,String(j))?.value;if(!Number.isFinite(value))return null;coefficients.push(value);}
+  }
+  const token={planes,eye,focal,state,scratch,epoch,arena,xyz,coefficients,detailLOD:values.detailLOD,enabled:values.detailLOD!==false};wasmContexts195.add(token);return token;
+ }
+
+ function wasmProof195(bucket,data,sp,groups,planes,eye,focal,state,out,epoch,token){
+  if(!token||!wasmContexts195.has(token)||token.epoch!==epoch||token.planes!==planes||token.eye!==eye||token.focal!==focal||token.state!==state||token.scratch.data!==out||token.arena.failed)return null;
+  if(state.selected!==0||state.isolate!==0||state.explode!==0||state.vegetation!==true||state.detailLOD!==token.detailLOD)return null;
+  const proof=wasmProofs195.get(bucket);
+  if(!proof||proof.epoch!==epoch||proof.arena!==token.arena||proof.data!==data||proof.sp!==sp||proof.groups!==groups||proof.flags!==bucket.essentialFlags||proof.surface!==bucket.surfaceWidths||proof.count!==bucket.count||data.length!==proof.count*28||sp.length!==proof.count*5||groups.length!==Math.ceil(proof.count/64)*5||proof.flags.length!==proof.count||proof.surface&&proof.surface.length!==proof.count)return null;
+  if(data.buffer===out.buffer||sp.buffer===out.buffer||groups.buffer===out.buffer||proof.flags.buffer===out.buffer||proof.surface&&proof.surface.buffer===out.buffer)return null;
+  return proof;
+ }
+
+ function register(proto){
+  const names=['buildVisiblePlan','visibleRanges','instanceCache','groupDraws','mergePage208','schedulePackedVisibility206','cancelPackedVisibility206','scheduleHighVisibilityBatch','cancelHighVisibilityBatch'];
+  wasmEngineMethods195={proto,methods:Object.fromEntries(names.map(k=>[k,proto[k]])),select:scalarSelect,packed:visibility.packedSelect195,indexed,prepare:visibility.preparePacked206};
+ }
+ function close(e){const j=jobs.get(e);if(!j)return;j.failed=true;if(j.idle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(j.idle);j.steps?.return();j.entries?.return?.();if(j.arena){j.arena.failed=true;j.arena.token=null;j.arena.instance=j.arena.buffer=j.arena.f32=j.arena.f64=j.arena.u32=j.arena.u8=null;}jobs.delete(e);}
+ function schedule(e){
+  if(!enabled(e)){close(e);return;}
+  if(typeof scalarSelect!=='function'||e.disposed||e.qualityPreset!=='high'||!packedIdleState206(e)||!e.bucketIndex||!e.bucketIndexEpoch||typeof requestIdleCallback!=='function'||!little)return;
+  const existing=jobs.get(e);if(existing?.epoch===e.bucketIndexEpoch)return;if(existing)close(e);
+  const buckets=e.buckets;if(!(buckets instanceof Map)||Object.getPrototypeOf(buckets)!==Map.prototype||Object.hasOwn(buckets,'values')||Map.prototype.values!==values)return;
+  const j={epoch:e.bucketIndexEpoch,index:e.bucketIndex,buckets,entries:values.call(buckets),steps:null,idle:undefined,ready:false,failed:false,arena:null};jobs.set(e,j);
+  const tick=deadline=>{
+   if(jobs.get(e)!==j)return;j.idle=undefined;
+   if(typeof scalarSelect!=='function'||e.disposed||!enabled(e)||e.qualityPreset!=='high'||!packedIdleState206(e)||e.bucketIndexEpoch!==j.epoch||e.bucketIndex!==j.index||e.buckets!==buckets){close(e);return;}
+   const end=performance.now()+2;
+   try{
+    if(!j.arena){if(module===undefined){try{module=new WebAssembly.Module(kernelBytes);}catch{module=false;}}if(!module){j.failed=true;return;}const instance=new WebAssembly.Instance(module,{env:{hypot3:Math.hypot}}),buffer=instance.exports.memory.buffer;if(buffer.byteLength!==16777216)throw Error('High visibility arena size');j.arena={instance,buffer,f32:new Float32Array(buffer),f64:new Float64Array(buffer),u32:new Uint32Array(buffer),u8:new Uint8Array(buffer),classifyCalls:0,used:528384,buckets:0,instances:0,failed:false,token:null,batchCalls:0,spans:0};}
+    while(deadline.timeRemaining()>.5&&performance.now()<end){if(!j.steps){const next=j.entries.next();if(next.done){j.ready=true;j.entries=null;return;}j.steps=prepareWasm195(next.value,j.epoch,j.arena);}if(j.steps.next().done)j.steps=null;}
+    j.idle=requestIdleCallback(tick);
+   }catch{if(j.arena)j.arena.failed=true;j.failed=true;}
+  };j.idle=requestIdleCallback(tick);
+ }
+ function status(e){const j=jobs.get(e);if(!j)return null;const a=j.arena;return{memoryBytes:a?.buffer?.byteLength||0,usedBytes:a?.used||0,buckets:a?.buckets||0,instances:a?.instances||0,ready:j.ready,preparing:!j.ready&&!j.failed,failed:j.failed||!!a?.failed,batchCalls:a?.batchCalls||0,classifyCalls:a?.classifyCalls||0,spans:a?.spans||0};}
+ function select(bucket,planes,eye,focal,state,scratch,ownedScratch,appendToStream,result={count:0,culled:0},epoch,token){
+  const data=bucket.data,sp=bucket.spatial,groups=bucket.groups,out=scratch?.data,proof=ownedScratch&&appendToStream&&groups&&wasmProof195(bucket,data,sp,groups,planes,eye,focal,state,out,epoch,token);
+  if(!proof)return scalarSelect(bucket,planes,eye,focal,state,scratch,ownedScratch,appendToStream,result,epoch);
+  result.count=0;result.culled=0;const coarse=bucket.coarse;
+  if(!sphereVisible(planes,coarse[0],coarse[1],coarse[2],coarse[3]+Math.abs(state.explode||0)*bucket.maxPart))return result;
+  const a=proof.arena,enabled=state.detailLOD!==false,offset=scratch.used,n=data.length/28;let output=out,count=0,culled=0;
+  try{
+   if(a.token!==token){a.f64.set(token.coefficients,0);a.f64.set([...token.xyz,token.focal],128);a.token=token;}
+   for(let start=0;start<n;start+=65536){
+    const length=Math.min(65536,n-start),ng=Math.ceil(length/64);
+    if(bucket.groupDetail instanceof Float64Array&&bucket.groupDetail.length===Math.ceil(n/64)*4&&bucket.groupRoutes instanceof Uint8Array&&bucket.groupRoutes.length===Math.ceil(n/64)){
+     const first=start>>6;a.f64.set(groups.subarray(first*5,(first+ng)*5),33792);a.f64.set(bucket.groupDetail.subarray(first*4,(first+ng)*4),38912);a.u8.set(bucket.groupRoutes.subarray(first,first+ng),344064);
+     a.instance.exports.classify(ng,planes.length,enabled?1:0,1,bucket.ids.has(state.selected)?1:0);a.classifyCalls++;
+    }else{
+    for(let g=0;g<ng;g++){
+     const k=start+g*64,q=(k>>6)*5,r=groups[q+3]+Math.abs(state.explode||0)*groups[q+4];let outside=false,inside=true,classification;
+     for(const p of planes){const distance=p[0]*groups[q]+p[1]*groups[q+1]+p[2]*groups[q+2]+p[3];if(distance< -r){outside=true;break;}if(distance<r)inside=false;}
+     if(outside)classification=0;
+     else{
+      classification=inside?3:4;
+      if(inside&&!state.isolate&&state.vegetation!==false&&bucket.groupDetail&&!bucket.groupRoutes[k>>6]){
+       const d=(k>>6)*4,distance=Math.hypot(groups[q]-eye[0],groups[q+1]-eye[1],groups[q+2]-eye[2]),far=distance+r,near=Math.max(0,distance-r);
+       if(enabled&&((near>=260&&!bucket.ids.has(state.selected)&&near>bucket.groupDetail[d+2]*focal/1.6)||Math.max(1,near)>bucket.groupDetail[d+3]*focal/.85))classification=2;
+       else if(!enabled||((far<260||far<bucket.groupDetail[d]*focal/1.6)&&Math.max(1,far)<bucket.groupDetail[d+1]*focal/.85))classification=1;
+      }
+     }a.u32[1024+g]=classification;
+    }
+    }
+    culled+=a.instance.exports.batch(proof.base,proof.stride,start,length,enabled?1:0,planes.length,4096,8192);a.batchCalls++;
+    const runs=a.u32[514],selected=a.u32[515],needed=offset+(count+selected)*28;if(runs>32768||selected>length)throw Error('High visibility span bounds');
+    if(needed>output.length){const capacity=Math.max(needed,Math.ceil(output.length*1.25));if(output.byteOffset===0&&output.byteLength===output.buffer.byteLength&&typeof output.buffer.transfer==='function')output=new Float32Array(output.buffer.transfer(capacity*4));else{const next=new Float32Array(capacity);next.set(output);output=next;}scratch.data=output;}
+    const before=count;for(let i=0;i<runs;i++){const first=a.u32[2048+i*2],size=a.u32[2049+i*2];if(!size||first<start||first+size>start+length)throw Error('High visibility span range');output.set(data.subarray(first*28,(first+size)*28),offset+count*28);count+=size;}if(count-before!==selected)throw Error('High visibility selected count');a.spans+=runs;
+   }
+   result.count=count;result.culled=culled;return result;
+  }catch{a.failed=true;return scalarSelect(bucket,planes,eye,focal,state,scratch,ownedScratch,appendToStream,result,epoch);}
+ }
+ function end(token){if(token)wasmContexts195.delete(token);}
+ return{register,schedule,close,status,context,select,end};
+})();
+
 const pickR5Reference=(()=>{const module={exports:{}};
 'use strict';
 // PRIVATE conditional arithmetic only. This module does not authorize a GL skip.
@@ -1617,7 +1744,7 @@ class Engine{
  g.invalidateFramebuffer(g.READ_FRAMEBUFFER,[g.COLOR_ATTACHMENT0,g.DEPTH_ATTACHMENT]);g.bindFramebuffer(g.FRAMEBUFFER,null);g.viewport(0,0,this.canvas.width,this.canvas.height);g.disable(g.DEPTH_TEST);g.depthMask(false);g.useProgram(p.p);this.sampler(p,'uSceneColor',0,this.sceneTarget.tex);this.sampler(p,'uSceneDepth',1,this.sceneTarget.depth);this.uniform(p,'uResolution',[this.canvas.width,this.canvas.height]);this.uniform(p,'uProjectionDepth',[1/this.projection[0],1/this.projection[5],this.projection[14],this.projection[10]]);this.uniform(p,'uProjectionOffset',[this.projection[8],this.projection[9]]);this.uniform(p,'uHDR',this.hdr?1:0);this.uniform(p,'uContact',this.state.contact===false?0:1);g.bindVertexArray(this.emptyVAO);g.drawArrays(g.TRIANGLES,0,3);g.bindVertexArray(null);g.depthMask(true);g.enable(g.DEPTH_TEST);}
  disposeTarget(t){if(!t)return;let g=this.gl;g.deleteFramebuffer(t.f);g.deleteTexture(t.tex);if(t.msF){g.deleteFramebuffer(t.msF);g.deleteRenderbuffer(t.msColor);g.deleteRenderbuffer(t.msDepth)}if(t.depth){if(t.depthTexture)g.deleteTexture(t.depth);else g.deleteRenderbuffer(t.depth)}}
  dispose(){pickR5Publication(this,'dispose');
-  if(this.disposed)return;this.disposed=true;this.sceneLoading46?.();this.releaseProgramStages();const g=this.gl;this.people?.dispose();this.people=null;
+  if(this.disposed)return;this.disposed=true;this.sceneLoading46?.();this.cancelHighVisibilityBatch?.();this.releaseProgramStages();const g=this.gl;this.people?.dispose();this.people=null;
   for(const fence of this.frameFences||[])g.deleteSync(fence);this.frameFences=[];
   for(const b of this.buckets.values())for(const view of b.lodViews||[b])for(const p of view.passes?.values()||[])g.deleteVertexArray(p.vao);this.qualityHistory?.clear();this.qualityScratch=null;this.qualityLevels=null;
   this.releaseInstancePool239?.();
@@ -1652,6 +1779,7 @@ class Engine{
   if(changed){this.shadowDirty=true;this.lastReflection=-1;this.lastReflectKey=null;this.reflectionCullRect=null;this.reflectionFootprintPlanes=null;if(pending.reflectTarget)this.reflectionTargetGeneration=(this.reflectionTargetGeneration||0)+1;}
   for(const t of Object.values(old))this.disposeTarget(t);pickR5AfterFrame(this);
   if(name==='low'||name==='medium')this.schedulePackedVisibility206();else if(this.packedWarmup206||this.packedWarmupReady206||this.packedWarmupFailed206)this.cancelPackedVisibility206();
+  if(name==='high')this.scheduleHighVisibilityBatch?.();else this.cancelHighVisibilityBatch?.();
  }
  resize(w,h){if(this.disposed)return;pickR5Invalidate(this,'resize');this.updateQualityTargets(this.qualityPreset||'high',w,h,true);}
  add(key,geometry,matrix,color,meta=[0,0,0,0],uv=[0,0,1,1]){this.invalidateBucketIndex();let b=this.buckets.get(key);if(!b){b={geometry:{v:new Float32Array(geometry.v)},detailWidth:geometry.detailWidth||0,qualityRole:geometry.qualityRole||null,qualityMetric:geometry.qualityMetric||0,qualityLods:geometry.qualityLods,instances:[]};this.buckets.set(key,b)}if(typeof color==='string')color=M.color(color);b.instances.push(...matrix,...color.slice(0,3),1,...meta,...uv);this.stats.instances++}
@@ -2026,7 +2154,7 @@ fenceInstancePool239(pass,cached=null){
  }
  // Only this engine's compiled-scene epoch may use indexed traversal. Any
  // supported geometry or Map membership/order edit must invalidate it first.
- invalidateBucketIndex(){pickR5Publication(this,'scene-mutation');this.cancelPackedVisibility206?.();
+ invalidateBucketIndex(){pickR5Publication(this,'scene-mutation');this.cancelHighVisibilityBatch?.();this.cancelPackedVisibility206?.();
   // CPU-only collectors also borrow this invalidation method.
   this.cancelInitialVisibility?.(true);
   this.bucketIndex=null;this.bucketIndexGeneration=(this.bucketIndexGeneration||0)+1;this.bucketIndexEpoch=null;
@@ -2034,6 +2162,9 @@ fenceInstancePool239(pass,cached=null){
   this.bucketIndexIdle=undefined;this.bucketIndexJob=null;
  }
  // Private lower-tier metadata preparation. Original scene/index/GL work is unchanged.
+ scheduleHighVisibilityBatch(){HighVisibilityBatch.schedule(this);}
+ cancelHighVisibilityBatch(){HighVisibilityBatch.close(this);}
+ highVisibilityBatchStatus(){return HighVisibilityBatch.status(this);}
  cancelPackedVisibility206(){
   const job=this.packedWarmup206,ready=this.packedWarmupReady206,failed=this.packedWarmupFailed206;
   if(!job&&!ready&&!failed)return;
@@ -2074,7 +2205,7 @@ fenceInstancePool239(pass,cached=null){
    this.bucketIndexIdle=undefined;
    if(this.disposed||this.bucketIndexEpoch!==epoch||this.buckets!==buckets||this.state.bucketSpatialIndex===false){if(this.bucketIndexJob===job)this.bucketIndexJob=null;return;}
    const end=performance.now()+2;
-   while(deadline.timeRemaining()>.5&&performance.now()<end){const step=job.next();if(step.done){this.bucketIndex=step.value;this.bucketIndexJob=null;if(this.qualityPreset==='low'||this.qualityPreset==='medium')this.schedulePackedVisibility206();this.cancelInitialVisibility(true);for(const[slot,cache]of this.visibilityCaches)if(cache.generation!==epoch.generation)this.visibilityCaches.delete(slot);return;}}
+   while(deadline.timeRemaining()>.5&&performance.now()<end){const step=job.next();if(step.done){this.bucketIndex=step.value;this.bucketIndexJob=null;if(this.qualityPreset==='low'||this.qualityPreset==='medium')this.schedulePackedVisibility206();else if(this.qualityPreset==='high')this.scheduleHighVisibilityBatch?.();this.cancelInitialVisibility(true);for(const[slot,cache]of this.visibilityCaches)if(cache.generation!==epoch.generation)this.visibilityCaches.delete(slot);return;}}
    this.bucketIndexIdle=requestIdleCallback(tick);
   };
   this.bucketIndexIdle=requestIdleCallback(tick);
@@ -2094,10 +2225,11 @@ fenceInstancePool239(pass,cached=null){
  *buildVisiblePlan(context,stream,cooperative=false){
   const{vp,slot,state,hidden,lodEye,focal,waterLevel,reflection}=context,planes=slot===3?[...this.reflectionPlanes(vp,reflection.scissor,state,reflection.target),...(reflection.footprintPlanes||[])]:M.frustum(vp),items=[],clear=[],selectionResult={count:0,culled:0};let submitted=0,triangles=0,culled=0;
    const fastContext195=!cooperative&&(this.qualityPreset==='low'||this.qualityPreset==='medium')&&M.frustum===wasmFrustum195?Y.Visibility.wasmContext195?.(planes,lodEye,focal,state,stream,this.bucketIndexEpoch,this):null;
+   const highContext=!cooperative&&this.qualityPreset==='high'&&M.frustum===wasmFrustum195?HighVisibilityBatch.context(planes,lodEye,focal,state,stream,this.bucketIndexEpoch,this):null;
    let batch=0;try{
    for(const[name,b]of (state.bucketSpatialIndex===false?this.buckets:Y.Visibility.indexedBuckets(this.bucketIndex,this.buckets,planes,state,this.bucketIndexEpoch))){
     if(cooperative&&++batch%16===0)yield;
-    if(hidden?.has(name)||(slot===2&&(b.uniformMaterial===4||b.uniformMaterial===8||b.uniformMaterial===44||b.uniformMaterial===47))||(slot===3&&b.uniformMaterial===4))continue;const result=(fastContext195?Y.Visibility.packedSelect195(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch,fastContext195):Y.Visibility.select(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch));culled+=result.culled;if(!result.count)continue;
+    if(hidden?.has(name)||(slot===2&&(b.uniformMaterial===4||b.uniformMaterial===8||b.uniformMaterial===44||b.uniformMaterial===47))||(slot===3&&b.uniformMaterial===4))continue;const result=(highContext?HighVisibilityBatch.select(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch,highContext):fastContext195?Y.Visibility.packedSelect195(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch,fastContext195):Y.Visibility.select(b,planes,lodEye,focal,state,stream,true,true,selectionResult,this.bucketIndexEpoch));culled+=result.culled;if(!result.count)continue;
     if(this.qualityPreset!=='high'&&b.lodViews){
      const parts=Y.QualityLOD.partition(this,b,context,stream,result.count);
      for(const part of parts){const record=this.instanceCache(part.b,slot,part.count,stream,null,state.deferredInstanceVAO!==false);items.push({b:part.b,record,ranges:null});submitted+=part.count;triangles+=part.b.vertexCount/3*part.count;}
@@ -2115,7 +2247,7 @@ fenceInstancePool239(pass,cached=null){
    const clearStart=items.length;clear.sort((a,b)=>b.depth-a.depth);items.push(...clear);
    const grouped=this.groupDraws(items,clearStart);
   return{items,clearStart,...grouped,submitted,triangles:Math.round(triangles),culled,hasWater:items.some(({b})=>b.materials.has(4)),water:items.filter(({b})=>b.uniformMaterial===4&&b.count===1).map(({b})=>b),stream};
-  }finally{if(fastContext195)Y.Visibility.endWasmContext195(fastContext195);}
+  }finally{if(fastContext195)Y.Visibility.endWasmContext195(fastContext195);HighVisibilityBatch.end(highContext);}
  }
  cancelInitialVisibility(clearPlans=false){
   if(this.initialVisibilityIdle!==undefined&&typeof cancelIdleCallback==='function')cancelIdleCallback(this.initialVisibilityIdle);
@@ -2206,6 +2338,7 @@ fenceInstancePool239(pass,cached=null){
   this.initialVisibilityIdle=requestIdleCallback(tick);
  }
  visibleScene(vp,slot){
+  if(this.qualityPreset==='high')this.scheduleHighVisibilityBatch?.();
   const context=this.visiblePlanContext(vp,slot),{key,state}=context;let cached=this.visibilityCaches.get(slot);
   if(!cached||cached.key!==key){
    const pending=this.initialVisibilityPlans?.get(slot);let plan;
@@ -2376,7 +2509,7 @@ fenceInstancePool239(pass,cached=null){
 Engine.normalProjectionFormat54=1;
 Engine.normalTransformFormat194=2;
 Object.defineProperty(Engine,'qualityProfiles',{value:qualityProfiles});
-Y.Engine=Engine;
+Y.Engine=Engine;Y.Engine.__registerHighVisibilityBatch=()=>{HighVisibilityBatch.register(Engine.prototype);delete Engine.__registerHighVisibilityBatch;};
 })(YY);
 
 /* Private bounded manifest-key pages; no scene geometry copy. */
@@ -2455,6 +2588,8 @@ P.mergePage208=function(a,b){const ma=a.b.resource,mb=b.b.resource,p=ma.page208;
 
 /* Private D195 original-method ownership registration. */
 YY.Visibility?.registerWasmEngine195?.(YY.Engine.prototype);
+
+YY.Engine.__registerHighVisibilityBatch?.();
 
 ;
 /* src/models.js */
@@ -40196,13 +40331,17 @@ const qualityNames=new Set(['low','medium','high']),qualityStorageKey='yanyuan.q
 function readQualityPreset(){try{const value=localStorage.getItem(qualityStorageKey);if(qualityNames.has(value))return value;}catch{}return 'high';}
 function saveQualityPreset(value){try{localStorage.setItem(qualityStorageKey,value);return true;}catch{return false;}}
 let qualityPreset=readQualityPreset();
+const highCPUStorageKey='yanyuan.high.cpu',highCPUDefault=false;
+function readHighCPUPreference(){try{const v=localStorage.getItem(highCPUStorageKey);if(v==='1'||v==='0')return v==='1';}catch{}return highCPUDefault;}
+function syncHighCPUControl(){const c=$('cpu-optimization');c.checked=state.highVisibilityBatch;c.disabled=!ready||!engine||engine.disposed||qualityPreset!=='high';}
+function changeHighCPUPreference(){if(!ready||!engine||engine.disposed||qualityPreset!=='high'){syncHighCPUControl();return;}state.highVisibilityBatch=$('cpu-optimization').checked;try{localStorage.setItem(highCPUStorageKey,state.highVisibilityBatch?'1':'0');}catch{}if(state.highVisibilityBatch)engine.scheduleHighVisibilityBatch();else engine.cancelHighVisibilityBatch();lastVisualKey='';syncHighCPUControl();}
 function changeQualityPreset(){
  const control=$('quality-preset');
  if(!ready||!engine||engine.disposed){control.value=qualityPreset;return;}
  try{engine.setQualityPreset(control.value);qualityPreset=engine.qualityPreset;control.value=qualityPreset;lastVisualKey='';if(!saveQualityPreset(qualityPreset))say('画质已切换，本次设置无法保存。');}
- catch(error){control.value=qualityPreset;say('画质切换未完成，请重试。');}
+ catch(error){control.value=qualityPreset;say('画质切换未完成，请重试。');}finally{syncHighCPUControl();}
 }
-const state={labels:true,time:0,hour:10.5,season:1,weather:0,selected:0,isolate:0,explode:0,selection:[0,0,0,0],contact:true,detailLOD:true,mapClarity:true,vegetation:true,people:true,routeEdges:new Set()};
+const state={labels:true,time:0,hour:10.5,season:1,weather:0,selected:0,isolate:0,explode:0,selection:[0,0,0,0],contact:true,detailLOD:true,mapClarity:true,vegetation:true,people:true,routeEdges:new Set(),highVisibilityBatch:readHighCPUPreference()};
 let engine,campus,ready=false,mode='3d',filter='精选',animation=!matchMedia('(prefers-reduced-motion: reduce)').matches,selected=0,last=0,lastDraw=0,labelTick=0,gesture=null,keys=new Set(),route=null,routePlaying=false,routeDistance=0,routeBackup=null,isolationBackup=null,toastTimer,walker=null,walkBackup=null,walkDetached=false;
 const orbit={target:[-20,0,30],distance:2250,elevation:1.05,yaw:0},planView={x:-20,z:30,w:1500},presets={campus:D.displayScope45.bounds,lake:[-210,-320,250,120],north:[-265,-690,495,-320],central:[-270,50,135,365],west:[-610,180,-110,745],science:[190,-45,490,365],teaching:[180,340,470,520],sports:[180,450,510,755],gardens:[-1240,-450,-470,100]};
 const browseMotion=matchMedia('(prefers-reduced-motion: reduce)');
@@ -40378,7 +40517,7 @@ for(const button of document.querySelectorAll('[data-walk-key]')){
 }
 $('show-people').onchange=()=>{state.people=$('show-people').checked;};
 $('walkers-view').onclick=()=>{if(!ready||!engine.people)return;changeMode('3d');closeDetail();routePlaying=false;$('environment').hidden=true;root.classList.add('catalog-hidden');Object.assign(orbit,engine.people.closeView());finishPanelOffset();engine.shadowDirty=true;};
-$('quality-preset').value=qualityPreset;$('quality-preset').onchange=changeQualityPreset;
+$('quality-preset').value=qualityPreset;$('quality-preset').onchange=changeQualityPreset;$('cpu-optimization').onchange=changeHighCPUPreference;syncHighCPUControl();
 $('show-labels').onchange=()=>{state.labels=$('show-labels').checked;drawLabels();drawPlan();};$('vegetation').onchange=()=>{state.vegetation=$('vegetation').checked;engine.shadowDirty=true;};$('search').oninput=renderCatalog;document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderCatalog()});document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>changeMode(b.dataset.mode));$('catalog-toggle').onclick=()=>setCatalogOpen(root.classList.contains('catalog-hidden'));$('catalog-collapse').onclick=()=>setCatalogOpen(false,true);$('catalog-restore').onclick=()=>setCatalogOpen(true,true);$('detail-close').onclick=closeDetail;$('detail-expand').onclick=()=>setDetailCompact(false);$('focus').onclick=()=>selected&&focusFeature(by.get(selected));$('isolate').onclick=isolate;$('front-view').onclick=()=>architectureView();$('side-view').onclick=()=>architectureView(false,Math.PI/2);$('back-view').onclick=()=>architectureView(false,Math.PI);$('roof-view').onclick=()=>architectureView(true);$('ne-view').onclick=()=>{if(!selected)return;changeMode('3d');browseCamera.cancel();finishPanelOffset();focusFeatureImmediate(by.get(selected));orbit.yaw=Math.PI*.75;orbit.elevation=.58;engine.shadowDirty=true;};$('isolation-exit').onclick=()=>exitIsolate();$('show-plan').onclick=()=>{changeMode('plan');if(selected)focusFeature(by.get(selected))};$('overlay').onchange=drawPlan;$('raw-overlay').onchange=drawPlan;$('home').onclick=()=>fitRegion('campus');$('north').onclick=()=>{browseCamera.cancel();finishPanelOffset();orbit.yaw=0;say('正北朝上')};$('top').onclick=()=>{browseCamera.cancel();finishPanelOffset();orbit.yaw=0;orbit.elevation=1.56;say('垂直俯视 · 北向朝上')};$('zoom-in').onclick=()=>zoom(.78);$('zoom-out').onclick=()=>zoom(1/.78);$('controls-open').onclick=()=>{stopWalkInput();$('controls-help').showModal()};$('sources-open').onclick=()=>$('sources').showModal();$('environment-open').onclick=()=>{stopWalkInput();$('environment').hidden=!$('environment').hidden;$('route-panel').hidden=true};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{const e=$(b.dataset.close);e instanceof HTMLDialogElement?e.close():e.hidden=true;if(b.dataset.close==='route-panel')routePlaying=false});$('hour').oninput=()=>{state.hour=+$('hour').value;$('hour-value').textContent=String(Math.floor(state.hour)).padStart(2,'0')+':'+String(Math.round(state.hour%1*60)).padStart(2,'0');engine.shadowDirty=true};$('season').onchange=()=>{state.season=+$('season').value;engine.shadowDirty=true};$('weather').onchange=()=>{state.weather=+$('weather').value;engine.shadowDirty=true};$('animation').checked=animation;$('animation').onchange=()=>animation=$('animation').checked;$('route-open').onclick=()=>{if(state.firstPerson)exitFirstPerson();$('route-panel').hidden=false;$('environment').hidden=true;if(selected)$('route-to').value=String(selected)};$('route-plan').onclick=planRoute;$('route-clear').onclick=clearRoute;$('route-play').onclick=toggleTravel;$('route-progress').oninput=()=>{if(!route)return;const progress=+$('route-progress').value;pauseTravel();routeDistance=progress/1000*route.length;moveAlong();syncWalkUI()};
 const walkKeys=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight']);
 window.addEventListener('keydown',e=>{
@@ -40428,7 +40567,7 @@ function tick(now){
   const view=camera(),mask=state.inspectionMask;
   const labelCameraKey=[...view.eye,...view.target,...(view.up||[0,1,0]),view.fov||.80,view.offsetX||0,view.offsetY||0,canvas.width,canvas.height,innerWidth,innerHeight].join(',');
   const labelCameraChanged=labelCameraKey!==lastLabelCameraKey;
-  const visualKey=[...view.eye,...view.target,view.offsetX,view.offsetY,state.hour,state.season,state.weather,state.selected,state.isolate,state.explode,state.contact,state.detailLOD,state.labels,state.vegetation,state.people,qualityPreset,[...state.routeEdges].join('/'),mask?.objectId,mask?.buckets?[...mask.buckets].join('/'):null,canvas.width,canvas.height,$('environment').hidden,$('route-panel').hidden].join(',');
+  const visualKey=[...view.eye,...view.target,view.offsetX,view.offsetY,state.hour,state.season,state.weather,state.selected,state.isolate,state.explode,state.contact,state.detailLOD,state.labels,state.vegetation,state.people,qualityPreset,state.highVisibilityBatch,[...state.routeEdges].join('/'),mask?.objectId,mask?.buckets?[...mask.buckets].join('/'):null,canvas.width,canvas.height,$('environment').hidden,$('route-panel').hidden].join(',');
   if(!animation&&!routePlaying&&!engine.shadowDirty&&visualKey===lastVisualKey&&!labelCameraChanged){if(labelsPending&&now-labelTick>170){drawLabels();labelTick=now;labelsPending=false;}return;}
   lastVisualKey=visualKey;engine.people?.setMotion(dt,animation);engine.render(view,state.firstPerson?{...state,routeEdges:noWalkRoute}:state);lastLabelCameraKey=labelCameraKey;labelsPending=true;if(labelCameraChanged||now-labelTick>170){drawLabels();labelTick=now;labelsPending=false;}
  }
@@ -40451,13 +40590,13 @@ async function init(recover=false){finishPanelOffset();
   next.onInstanceDataReady=()=>{if(generation===renderGeneration&&!next.disposed&&mode==='3d')next.prepareInitialVisibility(camera(),state.firstPerson?{...state,routeEdges:noWalkRoute}:state);};
   const scene=await loadRenderResources(next,(n,total)=>{if(generation===renderGeneration)$('status').textContent=(recover?'正在恢复校园… ':'正在打开校园… ')+Math.round(n/total*100)+'%';},prepared);
   if(generation!==renderGeneration){next.dispose();return;}
-  campus=scene;next.people=Y.Pedestrians46.create(next,campus,state);$('show-people').disabled=false;$('walkers-view').disabled=false;$('quality-preset').disabled=false;ready=true;lastVisualKey='';lastInput=null;last=lastDraw=0;root.dataset.ready='true';$('coverage').textContent=`${D.features.filter(f=>f.properties.kind==='building'&&!f.properties.supersededBy43).length} 个建筑对象`;$('status').textContent='';
-  window.Yanyuan={version:'1.5.4',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
+  campus=scene;next.people=Y.Pedestrians46.create(next,campus,state);$('show-people').disabled=false;$('walkers-view').disabled=false;$('quality-preset').disabled=false;ready=true;syncHighCPUControl();lastVisualKey='';lastInput=null;last=lastDraw=0;root.dataset.ready='true';$('coverage').textContent=`${D.features.filter(f=>f.properties.kind==='building'&&!f.properties.supersededBy43).length} 个建筑对象`;$('status').textContent='';
+  window.Yanyuan={version:'1.5.5',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
   if(!recover&&developmentReferences){const script=document.createElement('script');script.src='private/reference-gallery.js';script.onload=()=>{if(selected)renderReferenceGallery(by.get(selected).properties);};document.head.appendChild(script);}
    cancelAnimationFrame(frameRequest);frameRequest=requestAnimationFrame(tick);
  }catch(e){next?.dispose();if(generation!==renderGeneration)return;$('quality-preset').disabled=true;console.error(e);$('status').textContent='三维暂不可用，已切换平面地图。';changeMode('plan');ready=true;root.dataset.ready='plan-only';}finally{prepared?.dispose();}
 }
-canvas.addEventListener('webglcontextlost',event=>{browseCamera.cancel();finishPanelOffset();stopWalkInput();event.preventDefault();renderGeneration++;ready=false;$('quality-preset').disabled=true;cancelAnimationFrame(frameRequest);engine?.dispose();root.dataset.ready='recovering';$('status').textContent='正在恢复校园…';});
+canvas.addEventListener('webglcontextlost',event=>{browseCamera.cancel();finishPanelOffset();stopWalkInput();event.preventDefault();renderGeneration++;ready=false;syncHighCPUControl();$('quality-preset').disabled=true;cancelAnimationFrame(frameRequest);engine?.dispose();root.dataset.ready='recovering';$('status').textContent='正在恢复校园…';});
 canvas.addEventListener('webglcontextrestored',()=>init(true));
 
 // Keep disclosure buttons accurate when keyboard, selection or close controls hide panels.
