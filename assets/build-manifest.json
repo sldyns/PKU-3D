@@ -1,7 +1,7 @@
 {
-  "version": "1.5.5",
+  "version": "1.5.6",
   "htmlBytes": 16172,
-  "scriptBytes": 15459501,
+  "scriptBytes": 15459500,
   "runtimeData": [
     {
       "file": "data-25ea5ae72b953f7f.js",
@@ -28,7 +28,7 @@
   "sceneSourceHash": "886e3dec81d5491f2eb62380cd8c062fdd20afc12a103ce891d29b0c2bd06e18",
   "images": 0,
   "copiedAssets": 244,
-  "bundle": "app-f4d5a92dc66dbee2.js",
+  "bundle": "app-ec88f54d7c617eac.js",
   "sceneTransport": {
     "parts": 3,
     "bytes": 86273657,
