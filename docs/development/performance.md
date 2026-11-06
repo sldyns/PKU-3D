@@ -1,5 +1,13 @@
 # Rendering performance
 
+## 1.5.6 default policy
+
+The High CPU experiment now defaults on when no choice is saved, following explicit acceptance of its CPU-versus-frame-pacing tradeoff. Saved off/on choices are preserved, and the lighting-panel switch remains available. The kernel, arithmetic, scene assets and rendering settings are unchanged from 1.5.5. The original enabled-path results and negative combined pacing verdict below remain unchanged; changing the default does not turn that verdict into a pass.
+
+Against a frozen 1.5.5 distribution, eight fresh local-browser ABBA startup runs measured first-render medians of 1,321.20 and 1,348.00 ms and original-fence readiness of 1,460.00 and 1,475.65 ms. The original five-percent startup and reported-heap checks passed. The separate 16-case immediate-input screen did not meet all original five-percent limits: first zoom-out P95 submission spacing had a ratio of 1.2926, while event-to-render-return P95 was 1.0474. Maximum observed idle callback duration was 2.30 ms. These cold-input results are distinct from the settled 192-case results below and remain a limit of the enabled path.
+
+All 540 JavaScript and 23 packaging checks passed. Fresh-browser checks verified that no saved choice starts enabled, an explicit saved off choice survives reload, toggling off releases the arena, and enabled offline loading and context recovery work. Scene inputs, kernel bytes and rendering settings are unchanged; this patch changes the preference policy and version only.
+
 ## 1.5.5 High CPU work
 
 The lighting panel offers an explicit High CPU experiment, off by default. When enabled, High can batch original visibility classification and ordered instance gathering in a separate fixed 16 MiB CPU arena, prepared cooperatively during idle callbacks. The original Float64 decisions, `Math.hypot`, SIMD group instructions, detail thresholds and record bits are preserved. Unsupported states, incomplete preparation and failures retain the original scalar path. Disabling the option, invalidation, quality changes, disposal and context loss retire scheduled work and every arena view. The saved choice is independent of the quality preset; Medium and Low retain their existing paths.

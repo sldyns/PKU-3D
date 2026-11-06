@@ -51,7 +51,7 @@ The slower WebGPU experiment is excluded from the release. Keep research results
 
 High can prepare a separate, fixed 16 MiB visibility arena during bounded idle callbacks. Group classification and accepted-span gathering retain the original Float64 arithmetic, imported `Math.hypot`, detail thresholds and instance order; the existing SIMD group body is unchanged. See `app/tools/visibility-high-batch.wat` for the checked-in kernel source. Only Engine-owned metadata under the current scene epoch is eligible. Unsupported states, incomplete preparation and failures keep the original selector. Retire all typed views and scheduled work on invalidation, quality changes, disposal or context loss. High keeps its original GPU instance uploads and two-frame admission queue.
 
-This experiment is off by default. Only an explicit `state.highVisibilityBatch === true` admits preparation or selection; disabling it retires the arena and retains the original scalar path. The lighting-panel choice has its own saved preference and remains independent of the quality preset. Do not present the enabled-path CPU measurements as a passed combined pacing gate.
+Since 1.5.6 this experiment defaults on when no preference is saved. Only `state.highVisibilityBatch === true` admits preparation or selection; disabling it retires the arena and retains the original scalar path. Saved off/on choices remain authoritative, independently of the quality preset. Do not present the enabled-path CPU measurements as a passed combined pacing gate.
 
 ## First-person navigation
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.6
+
+- Enable the High CPU experiment by default when no explicit preference is saved. Preserve saved off/on choices and the existing switch.
+- Keep the same visibility kernel, arithmetic, geometry, source images and rendering settings as 1.5.5. The existing CPU-versus-frame-pacing tradeoff is explicitly accepted; its original negative combined benchmark verdict is unchanged.
+- Retain bounded idle preparation, fixed 16 MiB storage, scalar fallbacks and lifecycle cleanup.
+
 ## 1.5.5
 
 - Add an off-by-default High CPU experiment with an explicit, saved switch in the lighting panel. Batch original visibility classification and ordered instance gathering in a fixed 16 MiB CPU arena prepared during idle callbacks; disabling the option releases it.

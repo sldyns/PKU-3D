@@ -135,7 +135,7 @@ const qualityNames=new Set(['low','medium','high']),qualityStorageKey='yanyuan.q
 function readQualityPreset(){try{const value=localStorage.getItem(qualityStorageKey);if(qualityNames.has(value))return value;}catch{}return 'high';}
 function saveQualityPreset(value){try{localStorage.setItem(qualityStorageKey,value);return true;}catch{return false;}}
 let qualityPreset=readQualityPreset();
-const highCPUStorageKey='yanyuan.high.cpu',highCPUDefault=false;
+const highCPUStorageKey='yanyuan.high.cpu',highCPUDefault=true;
 function readHighCPUPreference(){try{const v=localStorage.getItem(highCPUStorageKey);if(v==='1'||v==='0')return v==='1';}catch{}return highCPUDefault;}
 function syncHighCPUControl(){const c=$('cpu-optimization');c.checked=state.highVisibilityBatch;c.disabled=!ready||!engine||engine.disposed||qualityPreset!=='high';}
 function changeHighCPUPreference(){if(!ready||!engine||engine.disposed||qualityPreset!=='high'){syncHighCPUControl();return;}state.highVisibilityBatch=$('cpu-optimization').checked;try{localStorage.setItem(highCPUStorageKey,state.highVisibilityBatch?'1':'0');}catch{}if(state.highVisibilityBatch)engine.scheduleHighVisibilityBatch();else engine.cancelHighVisibilityBatch();lastVisualKey='';syncHighCPUControl();}
@@ -395,7 +395,7 @@ async function init(recover=false){finishPanelOffset();
   const scene=await loadRenderResources(next,(n,total)=>{if(generation===renderGeneration)$('status').textContent=(recover?'正在恢复校园… ':'正在打开校园… ')+Math.round(n/total*100)+'%';},prepared);
   if(generation!==renderGeneration){next.dispose();return;}
   campus=scene;next.people=Y.Pedestrians46.create(next,campus,state);$('show-people').disabled=false;$('walkers-view').disabled=false;$('quality-preset').disabled=false;ready=true;syncHighCPUControl();lastVisualKey='';lastInput=null;last=lastDraw=0;root.dataset.ready='true';$('coverage').textContent=`${D.features.filter(f=>f.properties.kind==='building'&&!f.properties.supersededBy43).length} 个建筑对象`;$('status').textContent='';
-  window.Yanyuan={version:'1.5.5',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
+  window.Yanyuan={version:'1.5.6',data:D,engine,campus,state,orbit,planView,get mode(){return mode},get walker(){return walker},select,changeMode,fitRegion};
   if(!recover&&developmentReferences){const script=document.createElement('script');script.src='private/reference-gallery.js';script.onload=()=>{if(selected)renderReferenceGallery(by.get(selected).properties);};document.head.appendChild(script);}
    cancelAnimationFrame(frameRequest);frameRequest=requestAnimationFrame(tick);
  }catch(e){next?.dispose();if(generation!==renderGeneration)return;$('quality-preset').disabled=true;console.error(e);$('status').textContent='三维暂不可用，已切换平面地图。';changeMode('plan');ready=true;root.dataset.ready='plan-only';}finally{prepared?.dispose();}
